@@ -16,26 +16,22 @@
   <meta name="author" content="顾翅">
   <meta name="keywords" content="">
   
-    <meta name="description" content="基本概念mongod 是 MongoDB 系统的主要后台进程。它处理数据请求，管理数据访问，执行后台管理操作。 mongos 就是 “MongoDB Shard” 的简写，它是一个针对MongoDB分片配置的路由服务，该服务处理来自应用层的查询请求，确定数据在分片集群中的位置，以完成这些操作。从应用的角度来看，一个mongos实例表现得跟任何其他MongoDB实例完全相同 shard:分片，是指将">
+    <meta name="description" content="利用flask快速创建http服务Flask 是一个微型的 Python 开发的 Web 框架，基于Werkzeug WSGI工具箱和Jinja2 模板引擎。现在我想用它来做一个web通信服务框架。 安装flask pip install flask 实例代码服务端123456789101112131415161718192021222324252627282930313233343536#!&#x2F;u">
 <meta property="og:type" content="article">
-<meta property="og:title" content="mongodb实践">
-<meta property="og:url" content="https://minifive.github.io/MyBlog/2022/05/30/mongodb/index.html">
+<meta property="og:title" content="flask框架使用">
+<meta property="og:url" content="https://minifive.github.io/MyBlog/2022/05/30/flask%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="顾翅的笔记">
-<meta property="og:description" content="基本概念mongod 是 MongoDB 系统的主要后台进程。它处理数据请求，管理数据访问，执行后台管理操作。 mongos 就是 “MongoDB Shard” 的简写，它是一个针对MongoDB分片配置的路由服务，该服务处理来自应用层的查询请求，确定数据在分片集群中的位置，以完成这些操作。从应用的角度来看，一个mongos实例表现得跟任何其他MongoDB实例完全相同 shard:分片，是指将">
+<meta property="og:description" content="利用flask快速创建http服务Flask 是一个微型的 Python 开发的 Web 框架，基于Werkzeug WSGI工具箱和Jinja2 模板引擎。现在我想用它来做一个web通信服务框架。 安装flask pip install flask 实例代码服务端123456789101112131415161718192021222324252627282930313233343536#!&#x2F;u">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.runoob.com/wp-content/uploads/2013/12/replication.png">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/images/5f3f2bab6158bc7847e47cefxLlriGD101.png">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/images/5f3f2bd02dcade25208581b3t0bFhCRS01.png">
-<meta property="article:published_time" content="2022-05-30T06:10:09.000Z">
-<meta property="article:modified_time" content="2022-05-30T06:06:24.244Z">
+<meta property="article:published_time" content="2022-05-30T06:25:48.000Z">
+<meta property="article:modified_time" content="2022-05-30T06:30:45.863Z">
 <meta property="article:author" content="顾翅">
 <meta property="article:tag" content="技术">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://www.runoob.com/wp-content/uploads/2013/12/replication.png">
   
   
   
-  <title>mongodb实践 - 顾翅的笔记</title>
+  <title>flask框架使用 - 顾翅的笔记</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +194,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="mongodb实践"></span>
+            <span id="subtitle" data-typed-text="flask框架使用"></span>
           
         </div>
 
@@ -209,7 +205,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-05-30 14:10" pubdate>
+        <time datetime="2022-05-30 14:25" pubdate>
           2022年5月30日 下午
         </time>
       </span>
@@ -221,7 +217,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.4k 字
+          1.7k 字
         
       </span>
     
@@ -233,7 +229,7 @@
         
         
           <!-- compatible with older versions-->
-          20 分钟
+          15 分钟
         
       </span>
     
@@ -279,46 +275,16 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">mongodb实践</h1>
+            <h1 style="display: none">flask框架使用</h1>
             
             <div class="markdown-body">
               
-              <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p><strong>mongod</strong> 是 MongoDB 系统的主要后台进程。它处理数据请求，管理数据访问，执行后台管理操作。</p>
-<p><strong>mongos</strong> 就是 “MongoDB Shard” 的简写，它是一个针对MongoDB分片配置的路由服务，该服务处理来自应用层的查询请求，确定数据在分片集群中的位置，以完成这些操作。从应用的角度来看，一个<strong>mongos</strong>实例表现得跟任何其他MongoDB实例完全相同</p>
-<p><strong>shard</strong>:分片，是指将数据库拆分，将其分散在不同的机器上的过程，将数据分散到不同机器上不需要功能强大的服务器就可以存储更多的数据和处理更大的负载。其基本思想是将集合切成小块，这些小块分散到若干片里，并通过一个均衡器来对各个分片进行均衡及数据迁移。</p>
-<p><strong>config server</strong> 配置服务器，用于存储所有的数据元信息（路由、分片）的配置。mongos本身没有物理存储分片服务器和数据路由信息，只缓存在内存里，配置服务器则实际存储这些数据，mongos第一次启动或者关掉重启就会从config server中加载配置信息，以及config server信息变化时会通知所有的mongos更新自己的状态。</p>
-<p><strong>replica set</strong>： 副本集，其实就是shard的备份，防止shard挂掉之后数据丢失。复制提供了数据的冗余备份，并在多个服务器上存储数据副本。提供了数据的可用性并可保证数据的安全性。<br><strong>arbiter</strong>:仲裁者，是复制集中的一个mongodb实例，它并不保存数据。</p>
-<p>总结：mongodb中，应用请求mongos来操作数据库进行增删改查，config server中存储数据库元信息，并和mongos同步，数据最终存储在shard上，为防止数据丢失同步在副本集中存储了一份。仲裁在数据存储到分片时觉得存储到哪个节点。</p>
-<h1 id="mongodb数据访问过程"><a href="#mongodb数据访问过程" class="headerlink" title="mongodb数据访问过程"></a>mongodb数据访问过程</h1><p>MongoDB是个主从架构的数据库（开发中通常使用分片+副本集），以BSON文档的形式存数据库，额外加了些自己的东西，并以二进制编码存储。存储形式是双向链表。</p>
-<p>MongoDB中配置有一个主节点(Primary)，多个从节点(Secondary)，并彼此之间维持心跳，当主节点挂掉后，则发生[选举](<a target="_blank" rel="noopener" href="https://mongoing.com/archives/295">MongoDB的选举过程 | MongoDB中文社区</a>)，其中一个从节点变成</p>
-<p><img src="https://www.runoob.com/wp-content/uploads/2013/12/replication.png" srcset="/MyBlog/img/loading.gif" lazyload alt="MongoDB复制结构图"></p>
-<p>mongos 是 MongoDB 分片集群的访问入口，mongos 收到 Client 访问请求，会根据从 Config Server 获取的路由表将请求转发到后端对应的 Shard 上（通常根据_id做hash）。这里不得不说的一个容易踩坑点：通常采用Updata或者findAndModify对分片数据进行更新操作时，如果没有带分片键（_id）则会操作失败，具体原因可以看：[详解](<a target="_blank" rel="noopener" href="https://blog.wolfogre.com/posts/trap-of-update-on-sharding-mongodb/">在分片的 MongoDB Collection 上做更新操作时需要注意的问题 | Wolfogre&#39;s Blog</a>) （通常为了节省资源，开发环境不会对collection配置分片，导致开发环境没问题，线上update就出错，别问我为什么知道，都是血的教训）</p>
-<h1 id="mongos连接池"><a href="#mongos连接池" class="headerlink" title="mongos连接池"></a>mongos连接池</h1><p>mongo 分片架构中，mongos 作为 mongo 分片架构的路由选择器，使用中可能比较困惑的一个问题是 ： 客户端到 mongos 和 mongos 到 mongod 的连接数是什么样的关系？是 1: 1 的关系吗？ mongos 的连接池管理策略又是怎样的？</p>
-<p>mongos和mongod都有各自能承受的组大连接数。通常mongos和mongod的最大连接数默认值是08*ulimit -n 约为65536。 默认情况下 mongos 对客户端连接都是【 每连接每线程 】的模型，每个线程分配 1 M 的内存。mongos 内部有两种类型的连接池：传统的连接池( DBConnectionPool 结构) 和 ASIO 的连接池 ( ConnectionPool 结构)。传统连接池内的连接执行命令不会创建新的线程，是在 mongos 接收的连接创建的线程上执行的，所以不会消耗额外的内存空间。具体可参考：<a target="_blank" rel="noopener" href="https://mongoing.com/archives/30014">深度剖析mongos连接池 | MongoDB中文社区</a></p>
-<p>在实际业务中，要注意启服时大量玩家查询操作触发连接超过连接池及线程上限的情况。</p>
-<h1 id="mongodb分片详解"><a href="#mongodb分片详解" class="headerlink" title="mongodb分片详解"></a>mongodb分片详解</h1><p>Mongo分片集群中每个数据库都有自己的 primary shard, 未分片的集合存储在 primary shard 上，已分片的集合根据 shardKey 切割成不同的 chunk 分布到多个分片上。Mongo中最常见的分片方式有两种：范围分片和hash 分片</p>
-<h2 id="1-范围分片（Range-based-sharding）"><a href="#1-范围分片（Range-based-sharding）" class="headerlink" title="1.范围分片（Range based sharding）"></a>1.范围分片（Range based sharding）</h2><p>范围分片以shard key所属范围区间为依据对集合进行划分，根据字段的范围不同将一个集合的数据存储在不同的分片中。其原理如图</p>
-<p><img src="/MyBlog/images/5f3f2bab6158bc7847e47cefxLlriGD101.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
-<p>范围分片适合满足在一定范围内的查找，例如查找X的值在【100-200】之间的数据，mongo 路由根据Config server中存储的元数据，可以直接定位到指定的shard的Chunk中，但是如果shardkey有明显递增（或者递减）趋势，则新插入的文档多会分布到同一个chunk，无法扩展写的能力。</p>
-<h2 id="2-Hash分片（Hash-based-sharding）"><a href="#2-Hash分片（Hash-based-sharding）" class="headerlink" title="2.Hash分片（Hash based sharding）"></a>2.Hash分片（Hash based sharding）</h2><p> Hash分片是根据shard key计算hash值，并根据hash值按照范围分片的策略将文档分布到不同chunk上的过程。其原理如图:</p>
-<p><img src="/MyBlog/images/5f3f2bd02dcade25208581b3t0bFhCRS01.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
-<p>Hash分片能将文档随机分散到各个chunk上，充分的扩展写能力，弥补了范围分片的不足，但是Hash分片不能高效的服务范围查询，所有的范围查询都要分发到后端所有的Shard才能找出满足条件的文档。</p>
-<h1 id="常用命令行操作"><a href="#常用命令行操作" class="headerlink" title="常用命令行操作"></a>常用命令行操作</h1><p>命令行登录远程mongos</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">mongo</span> -host <span class="hljs-number">127.0.0.1</span> -port <span class="hljs-number">333</span> -u username -p password dbname<br></code></pre></td></tr></table></figure>
+              <h1 id="利用flask快速创建http服务"><a href="#利用flask快速创建http服务" class="headerlink" title="利用flask快速创建http服务"></a>利用flask快速创建http服务</h1><p>Flask 是一个微型的 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?from=pc_blog_highlight&q=Python">Python</a> 开发的 Web 框架，基于<a target="_blank" rel="noopener" href="https://www.oschina.net/p/werkzeug">Werkzeug</a> WSGI工具箱和<a target="_blank" rel="noopener" href="https://www.oschina.net/p/jinja">Jinja2</a> 模板引擎。现在我想用它来做一个web通信服务框架。</p>
+<h2 id="安装flask"><a href="#安装flask" class="headerlink" title="安装flask"></a>安装flask</h2><p> <code>pip install flask</code></p>
+<h1 id="实例代码"><a href="#实例代码" class="headerlink" title="实例代码"></a>实例代码</h1><h3 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python3</span><br><span class="hljs-comment">#coding=utf-8</span><br><br><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask, request, jsonify<br><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask<br><span class="hljs-keyword">import</span> json<br><br>app = Flask(__name__)<br>app.debug = <span class="hljs-literal">True</span><br><br><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/http/query/&#x27;</span>, methods=[<span class="hljs-string">&#x27;post&#x27;</span>]</span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">post_http</span>():<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> request.data:  <span class="hljs-comment"># 检测是否有数据</span><br>        <span class="hljs-keyword">return</span> (<span class="hljs-string">&#x27;fail&#x27;</span>)<br>    params = request.data.decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)<br>    <span class="hljs-comment"># 获取到POST过来的数据，因为我这里传过来的数据需要转换一下编码。根据晶具体情况而定</span><br>    prams = json.loads(params)<br>    <span class="hljs-built_in">print</span>(prams)<br>    <span class="hljs-comment"># 把区获取到的数据转为JSON格式。</span><br>    <span class="hljs-keyword">return</span> jsonify(prams)<br>    <span class="hljs-comment"># 返回JSON数据。</span><br><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/&#x27;</span>, methods = [<span class="hljs-string">&quot;GET&quot;</span>,<span class="hljs-string">&quot;POST&quot;</span>]</span>)   </span><span class="hljs-comment"># GET 和 POST 都可以</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_data</span>():<br>    name = request.args.get(<span class="hljs-string">&quot;name&quot;</span>)<br>    age = request.args.get(<span class="hljs-string">&quot;age&quot;</span>)<br>    <span class="hljs-built_in">print</span> <span class="hljs-string">&#x27;hello&#x27;</span>, name, age<br>    res = <span class="hljs-string">&#x27;hello:%s&#x27;</span>%name<br>    check_result_info = &#123;<span class="hljs-string">&#x27;code&#x27;</span>: <span class="hljs-number">200</span>&#125;<br>    check_result_info.update(&#123;<span class="hljs-string">&#x27;res&#x27;</span>: res&#125;)<br>    <span class="hljs-keyword">return</span> jsonify(check_result_info)<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    app.run(host=<span class="hljs-string">&#x27;127.0.0.1&#x27;</span>, port=<span class="hljs-number">5000</span>)<br></code></pre></td></tr></table></figure>
 
-<p>查看数据库</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">show</span> dbs<br></code></pre></td></tr></table></figure>
-
-<p>创建、切换数据库</p>
-<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stata"><span class="hljs-keyword">use</span> <span class="hljs-keyword">db</span><br></code></pre></td></tr></table></figure>
-
-<p>查看所有的数据表</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">show</span> collections<br></code></pre></td></tr></table></figure>
-
-<p>创建表</p>
-<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sas">db.createCollectio<span class="hljs-meta">n</span>(<span class="hljs-string">&#x27;表名&#x27;</span>)<br></code></pre></td></tr></table></figure>
-
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1>
+<h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>客户端post.py：<br>新启一个终端运行 sudo python3 post.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/env python2</span><br><span class="hljs-comment"># -*- coding: utf-8 -*-#请求htp/query/接口</span><br><br><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">Created on Fri Jun 12 18:55:07 2020</span><br><span class="hljs-string">@author: ansonwan</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-keyword">import</span> requests, json<br><span class="hljs-keyword">import</span> datetime<br><span class="hljs-keyword">import</span> time<br>data = &#123;<br>    <span class="hljs-string">&quot;datatime&quot;</span>: <span class="hljs-string">&quot;2020-07-02&quot;</span><br>&#125;<br><span class="hljs-comment"># 这里地址要和上面的服务端地址及端口好一致</span><br>url = <span class="hljs-string">&#x27;http://127.0.0.1:5000/http/query/&#x27;</span><br><br><span class="hljs-comment"># r = requests.post(url, data=json.dumps(data))</span><br><span class="hljs-comment"># print(r.json())</span><br><span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>    now_time = datetime.datetime.now().strftime(<span class="hljs-string">&#x27;%Y-%m-%d %H:%M:%S&#x27;</span>)<span class="hljs-comment"># 打印当前时间</span><br>    data[<span class="hljs-string">&quot;datatime&quot;</span>] = now_time<br>    r = requests.post(url, data=json.dumps(data)) <span class="hljs-comment"># 发送到服务端</span><br>    time.sleep(<span class="hljs-number">1</span>)<br></code></pre></td></tr></table></figure>
               
             </div>
             <hr/>
@@ -335,8 +301,15 @@
     
       <span class="category-chain">
         
-  <a href="/MyBlog/categories/mongo/" class="category-chain-item">mongo</a>
+  <a href="/MyBlog/categories/web/" class="category-chain-item">web</a>
   
+  
+    <span>></span>
+    
+  <a href="/MyBlog/categories/web/flask/" class="category-chain-item">flask</a>
+  
+  
+
   
 
       </span>
@@ -362,8 +335,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>mongodb实践</div>
-      <div>https://minifive.github.io/MyBlog/2022/05/30/mongodb/</div>
+      <div>flask框架使用</div>
+      <div>https://minifive.github.io/MyBlog/2022/05/30/flask框架使用/</div>
     </div>
     <div class="license-meta">
       
@@ -405,18 +378,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/MyBlog/2022/05/30/flask%E6%A1%86%E6%9E%B6%E4%BD%BF%E7%94%A8/" title="flask框架使用">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">flask框架使用</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/MyBlog/2022/05/27/docker%E5%AE%9E%E8%B7%B5/" title="docker实践">
-                        <span class="hidden-mobile">docker实践</span>
+                      <a href="/MyBlog/2022/05/30/mongodb/" title="mongodb实践">
+                        <span class="hidden-mobile">mongodb实践</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
