@@ -16,24 +16,26 @@
   <meta name="author" content="顾翅">
   <meta name="keywords" content="">
   
-    <meta name="description" content="docker底层原理docker底层的核心技术包括linux上的命名空间（Namespaces）、控制组（Control groups）、 Union文件系统和容器格式（Container format） 1.docker镜像我们都知道，操作系统分为 内核 和 用户空间。对于 Linux 而言，内核启动后，会挂载 root 文件系统为其提供用户空间支持。而 Docker 镜像（Image），就相当">
+    <meta name="description" content="基本概念mongod 是 MongoDB 系统的主要后台进程。它处理数据请求，管理数据访问，执行后台管理操作。 mongos 就是 “MongoDB Shard” 的简写，它是一个针对MongoDB分片配置的路由服务，该服务处理来自应用层的查询请求，确定数据在分片集群中的位置，以完成这些操作。从应用的角度来看，一个mongos实例表现得跟任何其他MongoDB实例完全相同 shard:分片，是指将">
 <meta property="og:type" content="article">
-<meta property="og:title" content="docker实践">
-<meta property="og:url" content="https://minifive.github.io/MyBlog/2022/05/27/docker%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:title" content="mongodb实践">
+<meta property="og:url" content="https://minifive.github.io/MyBlog/2022/05/30/mongodb/index.html">
 <meta property="og:site_name" content="顾翅的笔记">
-<meta property="og:description" content="docker底层原理docker底层的核心技术包括linux上的命名空间（Namespaces）、控制组（Control groups）、 Union文件系统和容器格式（Container format） 1.docker镜像我们都知道，操作系统分为 内核 和 用户空间。对于 Linux 而言，内核启动后，会挂载 root 文件系统为其提供用户空间支持。而 Docker 镜像（Image），就相当">
+<meta property="og:description" content="基本概念mongod 是 MongoDB 系统的主要后台进程。它处理数据请求，管理数据访问，执行后台管理操作。 mongos 就是 “MongoDB Shard” 的简写，它是一个针对MongoDB分片配置的路由服务，该服务处理来自应用层的查询请求，确定数据在分片集群中的位置，以完成这些操作。从应用的角度来看，一个mongos实例表现得跟任何其他MongoDB实例完全相同 shard:分片，是指将">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.chenshaowen.com/blog/images/2020/11/dind.png">
-<meta property="article:published_time" content="2022-05-27T06:10:09.000Z">
-<meta property="article:modified_time" content="2022-05-30T02:33:42.731Z">
+<meta property="og:image" content="https://www.runoob.com/wp-content/uploads/2013/12/replication.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/5f3f2bab6158bc7847e47cefxLlriGD101.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/5f3f2bd02dcade25208581b3t0bFhCRS01.png">
+<meta property="article:published_time" content="2022-05-30T06:10:09.000Z">
+<meta property="article:modified_time" content="2022-05-30T06:06:24.244Z">
 <meta property="article:author" content="顾翅">
 <meta property="article:tag" content="技术">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://www.chenshaowen.com/blog/images/2020/11/dind.png">
+<meta name="twitter:image" content="https://www.runoob.com/wp-content/uploads/2013/12/replication.png">
   
   
   
-  <title>docker实践 - 顾翅的笔记</title>
+  <title>mongodb实践 - 顾翅的笔记</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -196,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="docker实践"></span>
+            <span id="subtitle" data-typed-text="mongodb实践"></span>
           
         </div>
 
@@ -207,8 +209,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-05-27 14:10" pubdate>
-          2022年5月27日 下午
+        <time datetime="2022-05-30 14:10" pubdate>
+          2022年5月30日 下午
         </time>
       </span>
     
@@ -219,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.6k 字
+          2.4k 字
         
       </span>
     
@@ -231,7 +233,7 @@
         
         
           <!-- compatible with older versions-->
-          22 分钟
+          20 分钟
         
       </span>
     
@@ -277,50 +279,46 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">docker实践</h1>
+            <h1 style="display: none">mongodb实践</h1>
             
             <div class="markdown-body">
               
-              <h1 id="docker底层原理"><a href="#docker底层原理" class="headerlink" title="docker底层原理"></a>docker底层原理</h1><p>docker底层的核心技术包括linux上的命名空间（Namespaces）、控制组（Control groups）、 Union文件系统和容器格式（Container format）</p>
-<h2 id="1-docker镜像"><a href="#1-docker镜像" class="headerlink" title="1.docker镜像"></a>1.docker镜像</h2><p>我们都知道，操作系统分为 <strong>内核</strong> 和 <strong>用户空间</strong>。对于 <code>Linux</code> 而言，内核启动后，会挂载 <code>root</code> 文件系统为其提供用户空间支持。而 <strong>Docker 镜像</strong>（<code>Image</code>），就相当于是一个 <code>root</code> 文件系统</p>
-<p><strong>Docker 镜像</strong> 是一个特殊的文件系统，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）。镜像 <strong>不包含</strong> 任何动态数据，其内容在构建之后也不会被改变。</p>
-<p><strong>分层存储</strong>：因为镜像包含操作系统完整的 <code>root</code> 文件系统，其体积往往是庞大的，因此在 Docker 设计时，就充分利用 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Union_mount">Union FS</a> 的技术，将其设计为分层存储的架构</p>
-<p>分层存储的特征使得镜像的复用、定制变的更为容易。甚至可以用之前构建好的镜像作为基础层，然后进一步添加新的层，以定制自己所需的内容，构建新的镜像</p>
-<h2 id="2-docker容器"><a href="#2-docker容器" class="headerlink" title="2.docker容器"></a>2.docker容器</h2><p>镜像（<code>Image</code>）和容器（<code>Container</code>）的关系，就像是面向对象程序设计中的 <code>类</code> 和 <code>实例</code> 一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。</p>
-<p>容器的实质是进程，但与直接在宿主执行的进程不同，容器进程运行于属于自己的独立的 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Linux_namespaces">命名空间</a>。因此容器可以拥有自己的 <code>root</code> 文件系统、自己的网络配置、自己的进程空间，甚至自己的用户 ID 空间。容器内的进程是运行在一个隔离的环境里，使用起来，就好像是在一个独立于宿主的系统下操作一样。这种特性使得容器封装的应用比直接在宿主运行更加安全。</p>
-<h2 id="3-docker仓库"><a href="#3-docker仓库" class="headerlink" title="3.docker仓库"></a>3.docker仓库</h2><p>镜像构建完成后，可以很容易的在当前宿主机上运行，但是，如果需要在其它服务器上使用这个镜像，我们就需要一个集中的存储、分发镜像的服务，<a href="/docker_practice/repository/registry">Docker Registry</a> 就是这样的服务。</p>
-<p>一个 <strong>Docker Registry</strong> 中可以包含多个 <strong>仓库</strong>（&#96;</p>
-<h2 id="4-docker-in-docker"><a href="#4-docker-in-docker" class="headerlink" title="4.docker in docker"></a>4.docker in docker</h2><p>docker in docker 顾名思义就是在docker里运行docker，现在很多服务大多部署在云上，容器云是常见的服务端架构，为了业务的快速部署，docker in docker经常被应用到容器云的业务开发。</p>
-<p><img src="https://www.chenshaowen.com/blog/images/2020/11/dind.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
-<h1 id="Dockerfile实例"><a href="#Dockerfile实例" class="headerlink" title="Dockerfile实例"></a>Dockerfile实例</h1><p>上面提到docker采用<code>Union FS</code>文件系统，通过分层存储文件，其具体可表现在Dockerfile上，我们通过dockerfile自定义镜像时，可以在自己或者别人已经定义好的镜像基础上逐层累加，例如我们编写一个基于debian系统的带python环境的镜像：</p>
-<figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs dsconfig"><span class="hljs-string">FROM</span> <span class="hljs-string">debian</span><br><span class="hljs-string">COPY</span> . /<span class="hljs-string">home</span><br><span class="hljs-string">CMD</span> [<span class="hljs-string">&quot;bash&quot;</span>] <br><span class="hljs-string">LABEL</span> <span class="hljs-string">maintainer</span>=<span class="hljs-string">&#x27;python_work&#x27;</span><br><span class="hljs-string">RUN</span> \<br><span class="hljs-string">apt-get</span> -<span class="hljs-string">m</span> <span class="hljs-string">update</span> &amp;&amp; \<br><span class="hljs-string">apt-get</span> <span class="hljs-string">upgrade</span>  -<span class="hljs-string">y</span> &amp;&amp; \<br><span class="hljs-string">apt-get</span> -<span class="hljs-string">y</span> <span class="hljs-string">install</span> <span class="hljs-string">wget</span> &amp;&amp; \<br><span class="hljs-string">apt-get</span> -<span class="hljs-string">y</span> <span class="hljs-string">install</span> <span class="hljs-string">curl</span><br><br><br><span class="hljs-string">RUN</span> <span class="hljs-string">groupadd</span> -<span class="hljs-string">r</span> <span class="hljs-string">zhouxiao</span> &amp;&amp; \<br><span class="hljs-string">useradd</span> -<span class="hljs-string">r</span> -<span class="hljs-string">d</span> <span class="hljs-string">&quot;/home/zhouxiao&quot;</span> -<span class="hljs-string">m</span> -<span class="hljs-string">s</span> <span class="hljs-string">&quot;/bin/bash&quot;</span> -<span class="hljs-string">p</span> <span class="hljs-string">&quot;zhouxiao&quot;</span> -<span class="hljs-string">g</span> <span class="hljs-string">zhouxiao</span> <span class="hljs-string">admin</span><br><br><span class="hljs-comment"># Install Python</span><br><span class="hljs-string">RUN</span> \ <br><span class="hljs-string">apt-get</span> -<span class="hljs-string">y</span> <span class="hljs-string">install</span> <span class="hljs-string">python</span> <span class="hljs-string">libpython2</span>.<span class="hljs-string">7</span> <span class="hljs-string">telnet</span> <span class="hljs-string">vim</span> <span class="hljs-string">procps</span> <span class="hljs-string">rsyslog</span> <span class="hljs-string">zip</span>&amp;&amp; \<br><span class="hljs-string">wget</span> <span class="hljs-string">https</span>://<span class="hljs-string">bootstrap</span>.<span class="hljs-string">pypa</span>.<span class="hljs-string">io</span>/<span class="hljs-string">pip</span>/<span class="hljs-string">2</span>.<span class="hljs-string">7</span>/<span class="hljs-built_in">get-pip.py</span> &amp;&amp; \<br><span class="hljs-string">python</span> <span class="hljs-built_in">get-pip.py</span> &amp;&amp; \<br><span class="hljs-string">curl</span> -<span class="hljs-string">sL</span> <span class="hljs-string">https</span>://<span class="hljs-string">deb</span>.<span class="hljs-string">nodesource</span>.<span class="hljs-string">com</span>/<span class="hljs-string">setup_12</span>.<span class="hljs-string">x</span> | <span class="hljs-string">bash</span> -  &amp;&amp; \<br><span class="hljs-string">apt-get</span> <span class="hljs-string">clean</span><br></code></pre></td></tr></table></figure>
+              <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p><strong>mongod</strong> 是 MongoDB 系统的主要后台进程。它处理数据请求，管理数据访问，执行后台管理操作。</p>
+<p><strong>mongos</strong> 就是 “MongoDB Shard” 的简写，它是一个针对MongoDB分片配置的路由服务，该服务处理来自应用层的查询请求，确定数据在分片集群中的位置，以完成这些操作。从应用的角度来看，一个<strong>mongos</strong>实例表现得跟任何其他MongoDB实例完全相同</p>
+<p><strong>shard</strong>:分片，是指将数据库拆分，将其分散在不同的机器上的过程，将数据分散到不同机器上不需要功能强大的服务器就可以存储更多的数据和处理更大的负载。其基本思想是将集合切成小块，这些小块分散到若干片里，并通过一个均衡器来对各个分片进行均衡及数据迁移。</p>
+<p><strong>config server</strong> 配置服务器，用于存储所有的数据元信息（路由、分片）的配置。mongos本身没有物理存储分片服务器和数据路由信息，只缓存在内存里，配置服务器则实际存储这些数据，mongos第一次启动或者关掉重启就会从config server中加载配置信息，以及config server信息变化时会通知所有的mongos更新自己的状态。</p>
+<p><strong>replica set</strong>： 副本集，其实就是shard的备份，防止shard挂掉之后数据丢失。复制提供了数据的冗余备份，并在多个服务器上存储数据副本。提供了数据的可用性并可保证数据的安全性。<br><strong>arbiter</strong>:仲裁者，是复制集中的一个mongodb实例，它并不保存数据。</p>
+<p>总结：mongodb中，应用请求mongos来操作数据库进行增删改查，config server中存储数据库元信息，并和mongos同步，数据最终存储在shard上，为防止数据丢失同步在副本集中存储了一份。仲裁在数据存储到分片时觉得存储到哪个节点。</p>
+<h1 id="mongodb数据访问过程"><a href="#mongodb数据访问过程" class="headerlink" title="mongodb数据访问过程"></a>mongodb数据访问过程</h1><p>MongoDB是个主从架构的数据库（开发中通常使用分片+副本集），以BSON文档的形式存数据库，额外加了些自己的东西，并以二进制编码存储。存储形式是双向链表。</p>
+<p>MongoDB中配置有一个主节点(Primary)，多个从节点(Secondary)，并彼此之间维持心跳，当主节点挂掉后，则发生[选举](<a target="_blank" rel="noopener" href="https://mongoing.com/archives/295">MongoDB的选举过程 | MongoDB中文社区</a>)，其中一个从节点变成</p>
+<p><img src="https://www.runoob.com/wp-content/uploads/2013/12/replication.png" srcset="/MyBlog/img/loading.gif" lazyload alt="MongoDB复制结构图"></p>
+<p>mongos 是 MongoDB 分片集群的访问入口，mongos 收到 Client 访问请求，会根据从 Config Server 获取的路由表将请求转发到后端对应的 Shard 上（通常根据_id做hash）。这里不得不说的一个容易踩坑点：通常采用Updata或者findAndModify对分片数据进行更新操作时，如果没有带分片键（_id）则会操作失败，具体原因可以看：[详解](<a target="_blank" rel="noopener" href="https://blog.wolfogre.com/posts/trap-of-update-on-sharding-mongodb/">在分片的 MongoDB Collection 上做更新操作时需要注意的问题 | Wolfogre&#39;s Blog</a>) （通常为了节省资源，开发环境不会对collection配置分片，导致开发环境没问题，线上update就出错，别问我为什么知道，都是血的教训）</p>
+<h1 id="mongos连接池"><a href="#mongos连接池" class="headerlink" title="mongos连接池"></a>mongos连接池</h1><p>mongo 分片架构中，mongos 作为 mongo 分片架构的路由选择器，使用中可能比较困惑的一个问题是 ： 客户端到 mongos 和 mongos 到 mongod 的连接数是什么样的关系？是 1: 1 的关系吗？ mongos 的连接池管理策略又是怎样的？</p>
+<p>mongos和mongod都有各自能承受的组大连接数。通常mongos和mongod的最大连接数默认值是08*ulimit -n 约为65536。 默认情况下 mongos 对客户端连接都是【 每连接每线程 】的模型，每个线程分配 1 M 的内存。mongos 内部有两种类型的连接池：传统的连接池( DBConnectionPool 结构) 和 ASIO 的连接池 ( ConnectionPool 结构)。传统连接池内的连接执行命令不会创建新的线程，是在 mongos 接收的连接创建的线程上执行的，所以不会消耗额外的内存空间。具体可参考：<a target="_blank" rel="noopener" href="https://mongoing.com/archives/30014">深度剖析mongos连接池 | MongoDB中文社区</a></p>
+<p>在实际业务中，要注意启服时大量玩家查询操作触发连接超过连接池及线程上限的情况。</p>
+<h1 id="mongodb分片详解"><a href="#mongodb分片详解" class="headerlink" title="mongodb分片详解"></a>mongodb分片详解</h1><p>Mongo分片集群中每个数据库都有自己的 primary shard, 未分片的集合存储在 primary shard 上，已分片的集合根据 shardKey 切割成不同的 chunk 分布到多个分片上。Mongo中最常见的分片方式有两种：范围分片和hash 分片</p>
+<h2 id="1-范围分片（Range-based-sharding）"><a href="#1-范围分片（Range-based-sharding）" class="headerlink" title="1.范围分片（Range based sharding）"></a>1.范围分片（Range based sharding）</h2><p>范围分片以shard key所属范围区间为依据对集合进行划分，根据字段的范围不同将一个集合的数据存储在不同的分片中。其原理如图</p>
+<p><img src="/MyBlog/images/5f3f2bab6158bc7847e47cefxLlriGD101.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>范围分片适合满足在一定范围内的查找，例如查找X的值在【100-200】之间的数据，mongo 路由根据Config server中存储的元数据，可以直接定位到指定的shard的Chunk中，但是如果shardkey有明显递增（或者递减）趋势，则新插入的文档多会分布到同一个chunk，无法扩展写的能力。</p>
+<h2 id="2-Hash分片（Hash-based-sharding）"><a href="#2-Hash分片（Hash-based-sharding）" class="headerlink" title="2.Hash分片（Hash based sharding）"></a>2.Hash分片（Hash based sharding）</h2><p> Hash分片是根据shard key计算hash值，并根据hash值按照范围分片的策略将文档分布到不同chunk上的过程。其原理如图:</p>
+<p><img src="/MyBlog/images/5f3f2bd02dcade25208581b3t0bFhCRS01.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>Hash分片能将文档随机分散到各个chunk上，充分的扩展写能力，弥补了范围分片的不足，但是Hash分片不能高效的服务范围查询，所有的范围查询都要分发到后端所有的Shard才能找出满足条件的文档。</p>
+<h1 id="常用命令行操作"><a href="#常用命令行操作" class="headerlink" title="常用命令行操作"></a>常用命令行操作</h1><p>命令行登录远程mongos</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">mongo</span> -host <span class="hljs-number">127.0.0.1</span> -port <span class="hljs-number">333</span> -u username -p password dbname<br></code></pre></td></tr></table></figure>
 
-<p>！！ 这里<code>From</code>定义了基础镜像为debian，此外<code>COPY</code>、<code>RUN</code>等每一条命令均代表一层镜像，因此尽量将指令结合成一条可节省使用到的层数。</p>
-<p>有了Dockerfile后我们可以生成自定义镜像：</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">docker <span class="hljs-keyword">build </span>-t python_test:<span class="hljs-built_in">v1</span> -f Dockerfile .<br></code></pre></td></tr></table></figure>
+<p>查看数据库</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">show</span> dbs<br></code></pre></td></tr></table></figure>
 
-<p>这里我们生成了python_test这个镜像，接下来可以通过这个镜像创建容器：</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs applescript">docker <span class="hljs-built_in">run</span> -<span class="hljs-keyword">it</span> <span class="hljs-comment">--name mypython -d python_test:v1 /bin/bash</span><br></code></pre></td></tr></table></figure>
+<p>创建、切换数据库</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stata"><span class="hljs-keyword">use</span> <span class="hljs-keyword">db</span><br></code></pre></td></tr></table></figure>
 
-<h1 id="docker-容器内文件映射"><a href="#docker-容器内文件映射" class="headerlink" title="docker 容器内文件映射"></a>docker 容器内文件映射</h1><p>有时候我们不想在镜像中copy本地文件进去，因为这样会导致镜像占用文件贼大。我们可以使用<code>docker run -v</code>指令在创建Docker容器时与本地路径进行映射共享文件，例如我需要将本地的的<code>/root/code</code>路径映射到容器内的<code>/data/code</code>路径，使用如下指令，冒号前为宿主机路径，冒号后为容器路径，其中xxx为镜像完整路径</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker run -it -v /root/code:/data/code xxx /bin/bash<br></code></pre></td></tr></table></figure>
+<p>查看所有的数据表</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs dart"><span class="hljs-keyword">show</span> collections<br></code></pre></td></tr></table></figure>
 
-<h1 id="docker实践"><a href="#docker实践" class="headerlink" title="docker实践"></a>docker实践</h1><p>1.由于docker采用c&#x2F;s架构，所以要先启动docker服务；</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">service</span> docker status <span class="hljs-comment">#查看docker服务状态</span><br></code></pre></td></tr></table></figure>
+<p>创建表</p>
+<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sas">db.createCollectio<span class="hljs-meta">n</span>(<span class="hljs-string">&#x27;表名&#x27;</span>)<br></code></pre></td></tr></table></figure>
 
-<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crmsh"> service docker <span class="hljs-literal">start</span> <span class="hljs-comment">#启动docker服务</span><br></code></pre></td></tr></table></figure>
-
-<p>2.由于我本地安装的是windows版本，因此可直接启动cmd输入docker连接docker服务</p>
-<p>3.下载镜像然后可以直接通过镜像创建容器</p>
-<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">docker pull nginx</span><br></code></pre></td></tr></table></figure>
-
-<p>3.可以根据镜像源自定义Dockerfile文件，然后docker build创建自己的镜像</p>
-<p>4.启动镜像：</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">docker</span> run --name webserver -d -p <span class="hljs-number">80</span>:<span class="hljs-number">80</span> nginx<br></code></pre></td></tr></table></figure>
-
-<p>这条命令会用 <code>nginx</code> 镜像启动一个容器，命名为 <code>webserver</code>，并且映射了 80 端口，这样我们可以用浏览器去访问这个 <code>nginx</code> 服务器。</p>
-<p>5.使用 <code>docker exec</code> 命令进入容器，修改其内容。（注意该容器必须是启动状态）</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs applescript">docker exec -<span class="hljs-keyword">it</span> webserver bash<br></code></pre></td></tr></table></figure>
+<h1 id=""><a href="#" class="headerlink" title=""></a></h1>
               
             </div>
             <hr/>
@@ -337,7 +335,7 @@
     
       <span class="category-chain">
         
-  <a href="/MyBlog/categories/docker/" class="category-chain-item">docker</a>
+  <a href="/MyBlog/categories/mongo/" class="category-chain-item">mongo</a>
   
   
 
@@ -364,8 +362,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>docker实践</div>
-      <div>https://minifive.github.io/MyBlog/2022/05/27/docker实践/</div>
+      <div>mongodb实践</div>
+      <div>https://minifive.github.io/MyBlog/2022/05/30/mongodb/</div>
     </div>
     <div class="license-meta">
       
@@ -377,7 +375,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年5月27日</div>
+          <div>2022年5月30日</div>
         </div>
       
       
@@ -407,18 +405,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/MyBlog/2022/05/30/mongodb/" title="mongodb实践">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">mongodb实践</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/MyBlog/2021/05/20/hello-world/" title="Hello World">
-                        <span class="hidden-mobile">Hello World</span>
+                      <a href="/MyBlog/2022/05/27/docker%E5%AE%9E%E8%B7%B5/" title="docker实践">
+                        <span class="hidden-mobile">docker实践</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
