@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://www.bloghome.com.cn/content/images/2021/04/20140909174314145.jpeg">
 <meta property="og:image" content="https://www.bloghome.com.cn/content/images/2021/04/20140909174119578.jpeg">
 <meta property="article:published_time" content="2022-06-10T11:35:21.000Z">
-<meta property="article:modified_time" content="2022-06-10T11:47:29.309Z">
+<meta property="article:modified_time" content="2022-06-10T11:53:57.339Z">
 <meta property="article:author" content="顾翅">
 <meta property="article:tag" content="数据结构">
 <meta name="twitter:card" content="summary_large_image">
@@ -290,9 +290,9 @@
 <h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><p>跳跃表的性能堪比红黑树，而且实现起来比红黑树简单很多。那么什么是跳跃表？理解跳跃表前我们先看一个基单链表结构。</p>
 <p><img src="https://img-blog.csdnimg.cn/20210317082630470.png" srcset="/MyBlog/img/loading.gif" lazyload alt="单链表结构原理"></p>
 <p>假如我们要查询值为 13的节点，对于上面的单向链表来说，我需要从前往后遍历节点，算一下要进行 10 次查找，性能是非常差的，如何提升查询速度？我们知道即使有序的链表也是没变法进行二分查找的，除非我们把这个链表变成红黑树这样的结构，但是红黑树实现起来太过麻烦。所以，如果我把这个链表像这样处理一下呢？</p>
-<p><img src="https://img-blog.csdnimg.cn/20210317082645182.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTQ0OTQxNDg=,size_16,color_FFFFFF,t_70" srcset="/MyBlog/img/loading.gif" lazyload alt="跳跃表结构原理"></p>
+<p><img src="https://img-blog.csdnimg.cn/20210317082645182.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTQ0OTQxNDg=,size_16,color_FFFFFF,t_70" srcset="/MyBlog/img/loading.gif" lazyload alt="两层跳跃表结构原理"></p>
 <p>我把第一层链表中的元素，每隔2个元素就向上提取一个元素，形成第二层的链表，如上图，如果我查找元素的时候先从最上面的层级找 13 ，当找到 18的时候大于13，就退回10，往下一层找，然后就找到13了，你数一下这一次的查找次数几乎是之前的单向链表的一半，大大节省了查询时间。那如果我再往上抽取一层呢？</p>
-<p><img src="https://img-blog.csdnimg.cn/20210317082724541.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTQ0OTQxNDg=,size_16,color_FFFFFF,t_70" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p><img src="https://img-blog.csdnimg.cn/20210317082724541.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTQ0OTQxNDg=,size_16,color_FFFFFF,t_70" srcset="/MyBlog/img/loading.gif" lazyload alt="三层跳跃表结构原理"></p>
 <p>按照刚才的规律，我们再向上抽取一层，这一次查找的次数是不是又变少了？其实这种数据结构就是“跳跃表”的存储结构了。其实你可以发现他的查询性能是可以媲美红黑树的，但是实现起来比红黑树简单许多。</p>
 <h2 id="随机层数"><a href="#随机层数" class="headerlink" title="随机层数"></a>随机层数</h2><p>跳表引入了随机深度的机制，也就是一个结点能够出现的层数数量是随机的。并且所有的跳表结点都出现在第一层中，当某结点出现在第i层，那么它一定出现在第i-1层，我们假设该结点出现在第i+1层的概率为p, 则对于任意一个结点, 它只有1层的概率为（1-p），有两层的概率为p(1-p)，因此跳跃表的层数概率期望：</p>
 <p><img src="https://www.shouxicto.com/zb_users/upload/2021/10/20211007091744163356946420519.webp" srcset="/MyBlog/img/loading.gif" lazyload alt="跳跃表随机层数概率期望"></p>
