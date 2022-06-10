@@ -24,7 +24,7 @@
 <meta property="og:description" content="服务端日志维护中，经常需要排查网络连通性及性能，ping、telnet命令有时候不能满足需求，本文收集整理了一些拥有的网络探测命令 nc 端口探测nc是netcat的简写，有着网络界的瑞士军刀美誉。因为它短小精悍、功能实用，被设计为一个简单、可靠的网络工具。我们知道telnet host port 只能用于测试tcp连通性，nc的功能包括： （1）实现任意TCP&#x2F;UDP端口的侦听，nc可">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-06-08T08:55:22.000Z">
-<meta property="article:modified_time" content="2022-06-08T09:01:22.019Z">
+<meta property="article:modified_time" content="2022-06-08T09:17:27.125Z">
 <meta property="article:author" content="顾翅">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary_large_image">
@@ -293,7 +293,7 @@
 
 <p>该样例扫描192.168.0.3 的端口 范围是 1-100，-v用于显示执行过程，-z不会产生额外的数据包，-w后面跟2表示最大等待时间2秒</p>
 <p>3.拷贝文件</p>
-<p>从server1拷贝文件到server2上。需要先在server2上，用nc激活监听，如下面的命令在server2上监听1234号端口，并把收到的哦数据写入1234.txt文件</p>
+<p>从server1拷贝文件到server2上。需要先在server2上，用nc激活监听，如下面的命令在server2上监听1234号端口，并把收到的数据写入1234.txt文件</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">server2：<br>[root@server2 ~]# nc -l 1234 &gt; 1234.txt<br></code></pre></td></tr></table></figure>
 
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">server1：<br>[root@server1 ~]# cat abc.txt <br>abc.txtabc.txtabc.txtabc.txtabc.txtabc.txtabc.txtabc.txtabc.txt<br>[root@server1 ~]# nc -w 1 192.168.200.27 1234 &lt; abc.txt<br></code></pre></td></tr></table></figure>
@@ -331,8 +331,7 @@
 <p>3.参数说明</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs shell">使用方法: wrk &lt;选项&gt; &lt;被测HTTP服务的URL&gt;                            <br>  Options:                                            <br>    -c, --connections &lt;N&gt;  跟服务器建立并保持的TCP连接数量  <br>    -d, --duration    &lt;T&gt;  压测时间           <br>    -t, --threads     &lt;N&gt;  使用多少个线程进行压测   <br>                                                      <br>    -s, --script      &lt;S&gt;  指定Lua脚本路径       <br>    -H, --header      &lt;H&gt;  为每一个HTTP请求添加HTTP头      <br>        --latency          在压测结束后，打印延迟统计信息   <br>        --timeout     &lt;T&gt;  超时时间     <br>    -v, --version          打印正在使用的wrk的详细版本信息<br>                                                      <br>  &lt;N&gt;代表数字参数，支持国际单位 (1k, 1M, 1G)<br>  &lt;T&gt;代表时间参数，支持时间单位 (2s, 2m, 2h)<br></code></pre></td></tr></table></figure>
 
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><hr>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/AePNULaXl8sZlIQTTJz2TA">Linux 网络延迟排查方法</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/AePNULaXl8sZlIQTTJz2TA">Linux 网络延迟排查方法</a></p>
 
               
             </div>
@@ -419,6 +418,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/MyBlog/2022/06/10/%E8%B7%B3%E8%B7%83%E8%A1%A8skiplist/" title="跳跃表skiplist">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">跳跃表skiplist</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
