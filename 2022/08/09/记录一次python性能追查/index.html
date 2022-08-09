@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="顾翅的笔记">
 <meta property="og:description" content="本案例代码逻辑较为简单，主要记录了从python源码排查问题的过程以及python性能分析工具的使用。 背景在做战斗服负载均衡的时候有个场景需要从一个list中查找并删掉一个元素，大多数人可能会跟我一样选择内置函数remove，核心代码如下所示: 123def del_with_inter_func(ll, value):    if value in ll:         ll.remove(">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/%5Cimages%5C2022-07-21-17-30-28-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/1.png">
 <meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-19-15-38-52-image.png">
 <meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-19-15-44-56-image.png">
 <meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-19-20-56-34-image.png">
@@ -31,11 +31,11 @@
 <meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-21-17-47-03-image.png">
 <meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-21-17-47-31-image.png">
 <meta property="article:published_time" content="2022-08-09T14:23:22.000Z">
-<meta property="article:modified_time" content="2022-08-09T14:44:12.679Z">
+<meta property="article:modified_time" content="2022-08-09T14:49:42.557Z">
 <meta property="article:author" content="顾翅">
 <meta property="article:tag" content="性能优化">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://minifive.github.io/MyBlog/%5Cimages%5C2022-07-21-17-30-28-image.png">
+<meta name="twitter:image" content="https://minifive.github.io/MyBlog/images/1.png">
   
   
   
@@ -330,7 +330,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c">Py_ssize_t<br><span class="hljs-title function_">PyList_Size</span><span class="hljs-params">(PyObject *op)</span><br>&#123;<br>    <span class="hljs-keyword">if</span> (!PyList_Check(op)) &#123;<br>        PyErr_BadInternalCall();<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>    &#125;<br>    <span class="hljs-keyword">else</span><br>        <span class="hljs-keyword">return</span> Py_SIZE(op);<br>&#125;<br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> Py_SIZE(ob)  (((PyVarObject*)(ob))-&gt;ob_size)</span><br></code></pre></td></tr></table></figure>
 
 <p>理论上一次遍历的代码会优于内置的in+remove方法，下面进行一下简单的测试（文末附完整测试代码）, 我们构造一个10000个元素的list并通过两种实现各调用1000次，查看运行时间对比：</p>
-<p><img src="/MyBlog/%5Cimages%5C2022-07-21-17-30-28-image.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p><img src="/MyBlog/images/1.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
 <p>通过测试发现一次遍历消耗的时间居然比in+remove还要慢，这让我难以理解。上述代码中process_list[j] !&#x3D; value最终调用到PyObject_RichCompareBool操作，而del process_list[j]也是同list_ass_slice相似的memmove操作，为什么性能反而不如in+remove的两次遍历呢？ 为搞清楚这一问题，我们需要进行一些性能追查。</p>
 <h2 id="性能追查"><a href="#性能追查" class="headerlink" title="性能追查"></a>性能追查</h2><p>首先，采用cPorfile对上述脚本进行性能分析：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">python -m cProfile -o test_del.out test_del.py<br></code></pre></td></tr></table></figure>
