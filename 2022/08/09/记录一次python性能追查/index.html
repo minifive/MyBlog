@@ -1,0 +1,840 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/MyBlog/img/fluid.png">
+  <link rel="icon" href="/MyBlog/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="顾翅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本案例代码逻辑较为简单，主要记录了从python源码排查问题的过程以及python性能分析工具的使用。 背景在做战斗服负载均衡的时候有个场景需要从一个list中查找并删掉一个元素，大多数人可能会跟我一样选择内置函数remove，核心代码如下所示: 123def del_with_inter_func(ll, value):    if value in ll:         ll.remove(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记录一次python性能追查">
+<meta property="og:url" content="https://minifive.github.io/MyBlog/2022/08/09/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1python%E6%80%A7%E8%83%BD%E8%BF%BD%E6%9F%A5/index.html">
+<meta property="og:site_name" content="顾翅的笔记">
+<meta property="og:description" content="本案例代码逻辑较为简单，主要记录了从python源码排查问题的过程以及python性能分析工具的使用。 背景在做战斗服负载均衡的时候有个场景需要从一个list中查找并删掉一个元素，大多数人可能会跟我一样选择内置函数remove，核心代码如下所示: 123def del_with_inter_func(ll, value):    if value in ll:         ll.remove(">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/%5Cimages%5C2022-07-21-17-30-28-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/%5Cimages%5C2022-07-19-15-38-52-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/%5Cimages%5C2022-07-19-15-44-56-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/%5Cimages%5C2022-07-19-20-56-34-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/%5Cimages%5C2022-07-21-17-37-16-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/%5Cimages%5C2022-07-21-17-47-03-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/%5Cimages%5C2022-07-21-17-47-31-image.png">
+<meta property="article:published_time" content="2022-08-09T14:23:22.000Z">
+<meta property="article:modified_time" content="2022-08-09T14:38:40.539Z">
+<meta property="article:author" content="顾翅">
+<meta property="article:tag" content="性能优化">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://minifive.github.io/MyBlog/%5Cimages%5C2022-07-21-17-30-28-image.png">
+  
+  
+  
+  <title>记录一次python性能追查 - 顾翅的笔记</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/MyBlog/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/MyBlog/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/MyBlog/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"minifive.github.io","root":"/MyBlog/","version":"1.9.0","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"wY8JNqDQPbzkm9jg4oRaRnOR-gzGzoHsz","app_key":"V4Mw4cY5AJltX4GnofA9E4Id","server_url":"https://wy8jnqdq.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/MyBlog/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/MyBlog/js/utils.js" ></script>
+  <script  src="/MyBlog/js/color-schema.js" ></script>
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/MyBlog/">
+      <strong>顾翅</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/MyBlog/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/MyBlog/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/MyBlog/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/MyBlog/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/MyBlog/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/MyBlog/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="记录一次python性能追查"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-08-09 22:23" pubdate>
+          2022年8月9日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          66 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">记录一次python性能追查</h1>
+            
+            <div class="markdown-body">
+              
+              <p>本案例代码逻辑较为简单，主要记录了从python源码排查问题的过程以及python性能分析工具的使用。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在做战斗服负载均衡的时候有个场景需要从一个list中查找并删掉一个元素，大多数人可能会跟我一样选择内置函数remove，核心代码如下所示:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">del_with_inter_func</span>(<span class="hljs-params">ll, value</span>):<br>    <span class="hljs-keyword">if</span> value <span class="hljs-keyword">in</span> ll: <br>        ll.remove(value)<br></code></pre></td></tr></table></figure>
+
+<p>考虑到python list是个线性结构，in操作和remove操作的时间复杂度均为**O(n)**，那上述操作岂不是要遍历两次list，由于是匹配服跑的逻辑，对cpu性能要求较高，如果list比较长，两次遍历也是一件很蠢的事情，下面直接从源码（python2.7.11版本）来看上述问题。</p>
+<h2 id="List内部实现"><a href="#List内部实现" class="headerlink" title="List内部实现"></a>List内部实现</h2><p><em>list</em> 对象在 <em>Python</em> 内部，由 <em>PyListObject</em> 结构体表示，定义于头文件 <em>Include&#x2F;listobject.h</em> 中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>    PyObject_VAR_HEAD<br>    <span class="hljs-comment">/* Vector of pointers to list elements.  list[0] is ob_item[0], etc. */</span><br>    PyObject **ob_item;<br><br>    <span class="hljs-comment">/* ob_item contains space for &#x27;allocated&#x27; elements.  The number</span><br><span class="hljs-comment">     * currently in use is ob_size.</span><br><span class="hljs-comment">     * Invariants:</span><br><span class="hljs-comment">     *     0 &lt;= ob_size &lt;= allocated</span><br><span class="hljs-comment">     *     len(list) == ob_size</span><br><span class="hljs-comment">     *     ob_item == NULL implies ob_size == allocated == 0</span><br><span class="hljs-comment">     * list.sort() temporarily sets allocated to -1 to detect mutations.</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * Items must normally not be NULL, except during construction when</span><br><span class="hljs-comment">     * the list is not yet visible outside the function that builds it.</span><br><span class="hljs-comment">     */</span><br>    Py_ssize_t allocated;<br>&#125; PyListObject;<br></code></pre></td></tr></table></figure>
+
+<p><em>list</em> 对象是一种 <strong>变长对象</strong> ，因此包含变长对象公共头部。除了公共头部， <em>list</em> 内部维护了一个动态数组，而数组则依次保存元素对象的指针：</p>
+<ul>
+<li><em>ob_item</em> ，指向动态数组的指针，动态数组保存元素对象的指针；</li>
+<li><em>allocated</em> ，动态数组长度，即列表 <strong>容量</strong> ；</li>
+<li><em>ob_size</em> ，动态数组当前保存元素个数，即列表 <strong>长度</strong> ；</li>
+</ul>
+<h3 id="in操作源码"><a href="#in操作源码" class="headerlink" title="in操作源码"></a>in操作源码</h3><p>python中in操作用来判断某个元素是否在**ob_item数组中，其源码如下所示。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">int</span><br><span class="hljs-title function_">list_contains</span><span class="hljs-params">(PyListObject *a, PyObject *el)</span><br>&#123;<br>    Py_ssize_t i;<br>    <span class="hljs-type">int</span> cmp;<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>, cmp = <span class="hljs-number">0</span> ; cmp == <span class="hljs-number">0</span> &amp;&amp; i &lt; Py_SIZE(a); ++i)<br>        cmp = PyObject_RichCompareBool(el, PyList_GET_ITEM(a, i),<br>                                           Py_EQ);<br>    <span class="hljs-keyword">return</span> cmp;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>其中cmp &#x3D; PyObject_RichCompareBool(el, PyList_GET_ITEM(a, i)判断数组a中的第i个元素是否跟el这个对象相等, 相等返回1，不相等返回0，错误返回-1:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* Return -1 if error; 1 if v op w; 0 if not (v op w). */</span><br><span class="hljs-type">int</span><br><span class="hljs-title function_">PyObject_RichCompareBool</span><span class="hljs-params">(PyObject *v, PyObject *w, <span class="hljs-type">int</span> op)</span><br>&#123;<br>    PyObject *res;<br>    <span class="hljs-type">int</span> ok;<br><br>    <span class="hljs-comment">/* Quick result when objects are the same.</span><br><span class="hljs-comment">       Guarantees that identity implies equality. */</span><br>    <span class="hljs-keyword">if</span> (v == w) &#123;<br>        <span class="hljs-keyword">if</span> (op == Py_EQ)<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (op == Py_NE)<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    &#125;<br><br>    res = PyObject_RichCompare(v, w, op);<br>    <span class="hljs-keyword">if</span> (res == <span class="hljs-literal">NULL</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>    <span class="hljs-keyword">if</span> (PyBool_Check(res))<br>        ok = (res == Py_True);<br>    <span class="hljs-keyword">else</span><br>        ok = PyObject_IsTrue(res);<br>    Py_DECREF(res);<br>    <span class="hljs-keyword">return</span> ok;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>PyList_GET_ITEM操作更简单，就是从ob_item中取出第i个元素，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> PyList_GET_ITEM(op, i) (((PyListObject *)(op))-&gt;ob_item[i])</span><br></code></pre></td></tr></table></figure>
+
+<p>上面的list_contains代码可以理解为：for循环判断PyListObject *a中的元素，如果与el不相等则cmp为0继续遍历直到遍历到cmp为1为止。很显然，in操作需要遍历一次ob_item列表。</p>
+<h3 id="remove源码"><a href="#remove源码" class="headerlink" title="remove源码"></a>remove源码</h3><p>再来看下remove操作：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> PyObject *<br><span class="hljs-title function_">listremove</span><span class="hljs-params">(PyListObject *self, PyObject *v)</span><br>&#123;<br>    Py_ssize_t i;<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; Py_SIZE(self); i++) &#123;<br>        <span class="hljs-type">int</span> cmp = PyObject_RichCompareBool(self-&gt;ob_item[i], v, Py_EQ);<br>        <span class="hljs-keyword">if</span> (cmp &gt; <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-keyword">if</span> (list_ass_slice(self, i, i+<span class="hljs-number">1</span>,<br>                               (PyObject *)<span class="hljs-literal">NULL</span>) == <span class="hljs-number">0</span>)<br>                Py_RETURN_NONE;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmp &lt; <span class="hljs-number">0</span>)<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>    &#125;<br>    PyErr_SetString(PyExc_ValueError, <span class="hljs-string">&quot;list.remove(x): x not in list&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>remove操作也是一次遍历，先通过PyObject_RichCompareBool判断第i个元素与v是否相等，cmp&#x3D;1则相等，此时调用list_ass_slice进行删除操作。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-type">int</span><br><span class="hljs-title function_">list_ass_slice</span><span class="hljs-params">(PyListObject *a, Py_ssize_t ilow, Py_ssize_t ihigh, PyObject *v)</span><br>&#123;<br>    PyObject *recycle_on_stack[<span class="hljs-number">8</span>];<br>    PyObject **recycle = recycle_on_stack; <span class="hljs-comment">/* will allocate more if needed */</span><br>    PyObject **item;<br>    PyObject **vitem = <span class="hljs-literal">NULL</span>;<br>    PyObject *v_as_SF = <span class="hljs-literal">NULL</span>; <span class="hljs-comment">/* PySequence_Fast(v) */</span><br>    Py_ssize_t n; <span class="hljs-comment">/* # of elements in replacement list */</span><br>    Py_ssize_t norig; <span class="hljs-comment">/* # of elements in list getting replaced */</span><br>    Py_ssize_t d; <span class="hljs-comment">/* Change in size */</span><br>    Py_ssize_t k;<br>    <span class="hljs-type">size_t</span> s;<br>    <span class="hljs-type">int</span> result = <span class="hljs-number">-1</span>;            <span class="hljs-comment">/* guilty until proved innocent */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> b ((PyListObject *)v)</span><br>    <span class="hljs-keyword">if</span> (v == <span class="hljs-literal">NULL</span>)<br>        n = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">else</span> &#123;<br>       ...<br>    &#125;<br>    <span class="hljs-keyword">if</span> (ilow &lt; <span class="hljs-number">0</span>)<br>        ilow = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ilow &gt; Py_SIZE(a))<br>        ilow = Py_SIZE(a);<br><br>    <span class="hljs-keyword">if</span> (ihigh &lt; ilow)<br>        ihigh = ilow;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ihigh &gt; Py_SIZE(a))<br>        ihigh = Py_SIZE(a);<br><br>    norig = ihigh - ilow;<br>    assert(norig &gt;= <span class="hljs-number">0</span>);<br>    d = n - norig;<br>    <span class="hljs-keyword">if</span> (Py_SIZE(a) + d == <span class="hljs-number">0</span>) &#123;<br>        ...<br>    &#125;<br>    item = a-&gt;ob_item;<br><br>    <span class="hljs-comment">// 将需要删除的元素移动到recycle数组中</span><br>    s = norig * <span class="hljs-keyword">sizeof</span>(PyObject *);<br>    <span class="hljs-keyword">if</span> (s &gt; <span class="hljs-keyword">sizeof</span>(recycle_on_stack)) &#123;<br>        recycle = (PyObject **)PyMem_MALLOC(s);<br>        <span class="hljs-keyword">if</span> (recycle == <span class="hljs-literal">NULL</span>) &#123;<br>            PyErr_NoMemory();<br>            <span class="hljs-keyword">goto</span> Error;<br>        &#125;<br>    &#125;<br>    <span class="hljs-built_in">memcpy</span>(recycle, &amp;item[ilow], s);<br><br>    <span class="hljs-comment">// 实际删除操作的代码，此时d为-1，将item[ihigh]即之后的元素移动到item[ihigh+d]开始的地方，并重新计算a的大小</span><br>    <span class="hljs-keyword">if</span> (d &lt; <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">/* Delete -d items */</span><br>        memmove(&amp;item[ihigh+d], &amp;item[ihigh],<br>            (Py_SIZE(a) - ihigh)*<span class="hljs-keyword">sizeof</span>(PyObject *));<br>        list_resize(a, Py_SIZE(a) + d);<br>        item = a-&gt;ob_item;<br>    &#125;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (d &gt; <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">/* Insert d items */</span><br>       ...<br>    &#125;<br>    <span class="hljs-comment">// 调整引用计数</span><br>    <span class="hljs-keyword">for</span> (k = <span class="hljs-number">0</span>; k &lt; n; k++, ilow++) &#123;<br>        PyObject *w = vitem[k];<br>        Py_XINCREF(w);<br>        item[ilow] = w;<br>    &#125;<br>    <span class="hljs-keyword">for</span> (k = norig - <span class="hljs-number">1</span>; k &gt;= <span class="hljs-number">0</span>; --k)<br>        Py_XDECREF(recycle[k]);<br>    result = <span class="hljs-number">0</span>;<br> Error:<br>    ...<br><span class="hljs-meta">#<span class="hljs-keyword">undef</span> b</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>list_ass_slice源码较长，它不仅可以用来从list中删除部分元素，还可以用来进行插入操作，通过参数v是否为NULL来判断是执行删除还是插入，上面省略了插入相关的代码。</p>
+<p>上述代码也可以简单理解为：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-selector-tag">a</span><span class="hljs-selector-attr">[ilow:ihigh]</span> = v <span class="hljs-keyword">if</span> v != NULL<br><span class="hljs-selector-tag">del</span> <span class="hljs-selector-tag">a</span><span class="hljs-selector-attr">[ilow:ihigh]</span> <span class="hljs-keyword">if</span> v == NULL<br></code></pre></td></tr></table></figure>
+
+<p>在PyListObject中，如果是在列表中部删除元素的话，一定会引起内存的搬移动作，这一点跟 C++中的 vector 是完全一致的，而与 C++中的 list 不同。</p>
+<h3 id="一次遍历"><a href="#一次遍历" class="headerlink" title="一次遍历"></a>一次遍历</h3><p>既然内置函数有冗余的地方，我们可以很简单的通过一次遍历实现相同的功能：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">del_custom</span>(<span class="hljs-params">ll, value</span>):<br>    s = <span class="hljs-built_in">len</span>(ll)<br>    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> xrange(s):<br>        <span class="hljs-keyword">if</span> ll[j] != value: <br>            <span class="hljs-keyword">continue</span> <br>        <span class="hljs-keyword">del</span> ll[j]<br>        <span class="hljs-keyword">break</span><br></code></pre></td></tr></table></figure>
+
+<p>这段代码遍历并判断每个元素是否与目标元素相等，如果相等则删除，找到了就break跳出循环。并且代码只用到了xrange()，len()、del等基础操作。</p>
+<p>python ListObejct的len操作实际就是获取ob_size的过程，时间复杂度为O(1)</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c">Py_ssize_t<br><span class="hljs-title function_">PyList_Size</span><span class="hljs-params">(PyObject *op)</span><br>&#123;<br>    <span class="hljs-keyword">if</span> (!PyList_Check(op)) &#123;<br>        PyErr_BadInternalCall();<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>    &#125;<br>    <span class="hljs-keyword">else</span><br>        <span class="hljs-keyword">return</span> Py_SIZE(op);<br>&#125;<br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> Py_SIZE(ob)  (((PyVarObject*)(ob))-&gt;ob_size)</span><br></code></pre></td></tr></table></figure>
+
+<p>理论上一次遍历的代码会优于内置的in+remove方法，下面进行一下简单的测试（文末附完整测试代码）, 我们构造一个10000个元素的list并通过两种实现各调用1000次，查看运行时间对比：</p>
+<p><img src="/MyBlog/%5Cimages%5C2022-07-21-17-30-28-image.png" srcset="/MyBlog/img/loading.gif" lazyload alt="/images/5f3f2bab6158bc7847e47cefxLlriGD101.png"></p>
+<p>通过测试发现一次遍历消耗的时间居然比in+remove还要慢，这让我难以理解。上述代码中process_list[j] !&#x3D; value最终调用到PyObject_RichCompareBool操作，而del process_list[j]也是同list_ass_slice相似的memmove操作，为什么性能反而不如in+remove的两次遍历呢？ 为搞清楚这一问题，我们需要进行一些性能追查。</p>
+<h2 id="性能追查"><a href="#性能追查" class="headerlink" title="性能追查"></a>性能追查</h2><p>首先，采用cPorfile对上述脚本进行性能分析：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">python -m cProfile -o test_del.out test_del.py<br></code></pre></td></tr></table></figure>
+
+<p>采用pstats查看结果，并按照消耗时间time排序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">python -c <span class="hljs-string">&quot;import pstats; p=pstats.Stats(&#x27;test_del.out&#x27;); p.sort_stats(&#x27;time&#x27;).print_stats()&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/MyBlog/%5Cimages%5C2022-07-19-15-38-52-image.png" srcset="/MyBlog/img/loading.gif" lazyload alt="2022-07-19-15-38-52-image.png"></p>
+<p>这里打印出了各个函数调用的次数以及占用的时间，但是结果不够直观。我们继续通过火焰图形式显示函数调用栈：（需要安装flameprof）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">pip install flameprof <span class="hljs-comment"># 安装flameprof</span><br><span class="hljs-comment"># 去python/Lib/site-packages中找到flameprof.py</span><br>python flameprof.py test_del.out &gt; test_del.svg<br></code></pre></td></tr></table></figure>
+
+<p>然后浏览器打开test_del.svg结果如下图所示：</p>
+<p><img src="/MyBlog/%5Cimages%5C2022-07-19-15-44-56-image.png" srcset="/MyBlog/img/loading.gif" lazyload alt="d"></p>
+<p>火焰图能看到各个函数调用时间占比，但调用栈似乎显示不全，我们改用Qcachegrind(Kcachegrind)查阅表格化结果。</p>
+<p>Qcachegrind读取的文件格式是callgrind格式，不能直接支持python生成的profile记录。因此需要先使用pyprof2calltree工具进行转换：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">pip install pyprof2calltree <span class="hljs-comment"># 如果没安装的话</span><br>pyprof2calltree -i test_del.out <span class="hljs-comment">#会生成一个test_del.out.log文件</span><br></code></pre></td></tr></table></figure>
+
+<p>用Qcachegrind打开test_del.out.log文件, 如果没有可以先去下面的连接下载然后解压到文件夹，双击qcachegrind.exe运行，然后打开test_del.out.log文件即可。</p>
+<p><a target="_blank" rel="noopener" href="https://sourceforge.net/projects/qcachegrindwin/?source=typ_redirect">QCacheGrind 包体下载</a></p>
+<p><img src="/MyBlog/%5Cimages%5C2022-07-19-20-56-34-image.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>通过上面的分析可以看出，del_custom中唯一的函数调用len()虽然调用了1000次，但运行时间占比只有0.01%，并不是性能损耗的关键。难道问题出在参数传递的过程中？</p>
+<p>我们保留len()函数调用，但将遍历的list长度改为固定值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">del_custom2</span>(<span class="hljs-params">ll, value</span>):<br>    s = <span class="hljs-built_in">len</span>(ll)<br>    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> xrange(<span class="hljs-number">999</span>):<br>        <span class="hljs-keyword">if</span> ll[j] != value: <br>            <span class="hljs-keyword">continue</span> <br>        <span class="hljs-keyword">del</span> ll[j]<br>        <span class="hljs-keyword">break</span><br></code></pre></td></tr></table></figure>
+
+<p>然后运行发现耗时直接下降了一个数量级</p>
+<p><img src="/MyBlog/%5Cimages%5C2022-07-21-17-37-16-image.png" srcset="/MyBlog/img/loading.gif" lazyload alt="2"></p>
+<p>针对del_custom和del_custom2我们来看下运行的指令码：</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stata">import <span class="hljs-keyword">dis</span><br><span class="hljs-keyword">dis</span>.<span class="hljs-keyword">dis</span>(del_custom)<br><span class="hljs-keyword">dis</span>.<span class="hljs-keyword">dis</span>(del_custom2)<br></code></pre></td></tr></table></figure>
+
+<p><img src="/MyBlog/%5Cimages%5C2022-07-21-17-47-03-image.png" srcset="/MyBlog/img/loading.gif" lazyload alt="2022-07-21-17-47-03-image.png"></p>
+<p><img src="/MyBlog/%5Cimages%5C2022-07-21-17-47-31-image.png" srcset="/MyBlog/img/loading.gif" lazyload alt="2022-07-21-17-47-31-image.png"></p>
+<p>发现del_custom和del_custom2指令码唯一的区别在上图箭头所在位置 LOAD_FAST 和LOAD_CONST。接下来直接去ceval.c查找下这两个指令的实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// ceval.c</span><br><span class="hljs-comment">// LOAD_FAST</span><br>TARGET(LOAD_FAST)<br>&#123;<br>    x = GETLOCAL(oparg); <span class="hljs-comment">// 从f-&gt;f_localsplus中获取第i个元素</span><br>    <span class="hljs-keyword">if</span> (x != <span class="hljs-literal">NULL</span>) &#123;<br>        Py_INCREF(x);<br>        PUSH(x);<br>        FAST_DISPATCH();<br>    &#125;<br>    format_exc_check_arg(PyExc_UnboundLocalError,<br>        UNBOUNDLOCAL_ERROR_MSG,<br>        PyTuple_GetItem(co-&gt;co_varnames, oparg));<br>    <span class="hljs-keyword">break</span>;<br>&#125;<br><br><span class="hljs-comment">// LOAD_CONST</span><br>TARGET(LOAD_CONST)<br>&#123;<br>    x = GETITEM(consts, oparg); <span class="hljs-comment">//从co-&gt;co_consts中获取第i个元素</span><br>    Py_INCREF(x);<br>    PUSH(x);<br>    FAST_DISPATCH();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>LOAD_FAST相比LOAD_CONST的区别除了LOAD_FAST从f-&gt;f_localsplus中获取局部变量外，还多了一个format_exc_check_arg调用</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c">format_exc_check_arg(PyObject *exc, <span class="hljs-type">char</span> *format_str, PyObject *obj)<br>&#123;<br>    <span class="hljs-type">char</span> *obj_str;<br><br>    <span class="hljs-keyword">if</span> (!obj)<br>        <span class="hljs-keyword">return</span>;<br><br>    obj_str = PyString_AsString(obj);<br>    <span class="hljs-keyword">if</span> (!obj_str)<br>        <span class="hljs-keyword">return</span>;<br><br>    PyErr_Format(exc, format_str, obj_str);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="附完整测试代码"><a href="#附完整测试代码" class="headerlink" title="附完整测试代码"></a>附完整测试代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># -*- coding:utf-8 -*-</span><br><span class="hljs-keyword">import</span> time<br><span class="hljs-keyword">import</span> random    <br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">del_with_inter_func</span>(<span class="hljs-params">ll, value</span>):<br>    <span class="hljs-keyword">if</span> value <span class="hljs-keyword">in</span> ll: <br>        ll.remove(value)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">del_custom</span>(<span class="hljs-params">ll, value</span>):<br>    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> xrange(<span class="hljs-built_in">len</span>(ll)):<br>        <span class="hljs-keyword">if</span> ll[j] != value: <br>            <span class="hljs-keyword">continue</span> <br>        <span class="hljs-keyword">del</span> ll[j]<br>        <span class="hljs-keyword">break</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">test_del</span>():<br><br>    ll = [<span class="hljs-string">&#x27;test&#x27;</span>+<span class="hljs-built_in">str</span>(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> xrange(<span class="hljs-number">10000</span>)]<br>    t = random.randint(<span class="hljs-number">1</span>, <span class="hljs-number">10000</span>)<br>    value = <span class="hljs-string">&#x27;test&#x27;</span>+<span class="hljs-built_in">str</span>(t)<br>    <span class="hljs-built_in">print</span> <span class="hljs-string">&#x27;begin&#x27;</span>, <span class="hljs-string">&#x27;-&#x27;</span>*<span class="hljs-number">30</span><br><br>    <span class="hljs-comment"># 内置函数测试</span><br>    t1 = time.time()<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> xrange(<span class="hljs-number">1000</span>):<br>        del_with_inter_func(ll, t)<br>    t2 = time.time()<br><br>    <span class="hljs-built_in">print</span> <span class="hljs-string">&#x27;t1:&#x27;</span>, t2-t1<br>    <span class="hljs-built_in">print</span> <span class="hljs-string">&#x27;-&#x27;</span>*<span class="hljs-number">30</span><br><br>    <span class="hljs-comment"># 一次遍历测试</span><br>    ll2 = [<span class="hljs-string">&#x27;test&#x27;</span>+<span class="hljs-built_in">str</span>(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> xrange(<span class="hljs-number">10000</span>)]<br>    t1 = time.time()<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> xrange(<span class="hljs-number">1000</span>):<br>        del_custom(ll2, value)<br>    t2 = time.time()<br><br>    <span class="hljs-built_in">print</span> <span class="hljs-string">&#x27;t2:&#x27;</span>, t2-t1<br>    <span class="hljs-built_in">print</span> <span class="hljs-string">&#x27;end&#x27;</span>, <span class="hljs-string">&#x27;-&#x27;</span>*<span class="hljs-number">30</span><br><br>test_del()<br></code></pre></td></tr></table></figure>
+
+              
+            </div>
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/MyBlog/categories/python/" class="category-chain-item">python</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/MyBlog/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">#性能优化</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>记录一次python性能追查</div>
+      <div>https://minifive.github.io/MyBlog/2022/08/09/记录一次python性能追查/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>顾翅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年8月9日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/MyBlog/2022/06/20/ElasticSearch%E5%AD%A6%E4%B9%A0%E4%B8%8E%E5%AE%9E%E8%B7%B5/" title="ElasticSearch学习实践">
+                        <span class="hidden-mobile">ElasticSearch学习实践</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.4.16/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"wY8JNqDQPbzkm9jg4oRaRnOR-gzGzoHsz","appKey":"V4Mw4cY5AJltX4GnofA9E4Id","path":"window.location.pathname","placeholder":"欢迎吐槽","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/MyBlog/js/events.js" ></script>
+<script  src="/MyBlog/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+
+  
+    <script  src="/MyBlog/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.0/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script>
+  (function() {
+    var enableLang = CONFIG.code_language.enable && CONFIG.code_language.default;
+    var enableCopy = CONFIG.copy_btn;
+    if (!enableLang && !enableCopy) {
+      return;
+    }
+
+    function getBgClass(ele) {
+      return Fluid.utils.getBackgroundLightness(ele) >= 0 ? 'code-widget-light' : 'code-widget-dark';
+    }
+
+    var copyTmpl = '';
+    copyTmpl += '<div class="code-widget">';
+    copyTmpl += 'LANG';
+    copyTmpl += '</div>';
+    jQuery('.markdown-body pre').each(function() {
+      var $pre = jQuery(this);
+      if ($pre.find('code.mermaid').length > 0) {
+        return;
+      }
+      if ($pre.find('span.line').length > 0) {
+        return;
+      }
+
+      var lang = '';
+
+      if (enableLang) {
+        lang = CONFIG.code_language.default;
+        if ($pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2 && $pre.children().hasClass('hljs')) {
+          lang = $pre[0].children[0].classList[1];
+        } else if ($pre[0].getAttribute('data-language')) {
+          lang = $pre[0].getAttribute('data-language');
+        } else if ($pre.parent().hasClass('sourceCode') && $pre[0].children.length > 0 && $pre[0].children[0].classList.length >= 2) {
+          lang = $pre[0].children[0].classList[1];
+          $pre.parent().addClass('code-wrapper');
+        } else if ($pre.parent().hasClass('markdown-body') && $pre[0].classList.length === 0) {
+          $pre.wrap('<div class="code-wrapper"></div>');
+        }
+        lang = lang.toUpperCase().replace('NONE', CONFIG.code_language.default);
+      }
+      $pre.append(copyTmpl.replace('LANG', lang).replace('code-widget">',
+        getBgClass($pre[0]) + (enableCopy ? ' code-widget copy-btn" data-clipboard-snippet><i class="iconfont icon-copy"></i>' : ' code-widget">')));
+
+      if (enableCopy) {
+        Fluid.utils.createScript('https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js', function() {
+          var clipboard = new window.ClipboardJS('.copy-btn', {
+            target: function(trigger) {
+              var nodes = trigger.parentNode.childNodes;
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].tagName === 'CODE') {
+                  return nodes[i];
+                }
+              }
+            }
+          });
+          clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-copy', 'icon-success');
+            setTimeout(function() {
+              e.trigger.innerHTML = e.trigger.innerHTML.replace('icon-success', 'icon-copy');
+            }, 2000);
+          });
+        });
+      }
+    });
+  })();
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/MyBlog/js/local-search.js" ></script>
+
+  <script defer src="/MyBlog/js/leancloud.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/MyBlog/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

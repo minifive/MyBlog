@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://minifive.github.io/MyBlog/images/5f3f2bab6158bc7847e47cefxLlriGD101.png">
 <meta property="og:image" content="https://minifive.github.io/MyBlog/images/5f3f2bd02dcade25208581b3t0bFhCRS01.png">
 <meta property="article:published_time" content="2022-05-30T06:10:09.000Z">
-<meta property="article:modified_time" content="2022-05-30T06:06:24.244Z">
+<meta property="article:modified_time" content="2022-06-29T01:34:23.102Z">
 <meta property="article:author" content="顾翅">
 <meta property="article:tag" content="技术">
 <meta name="twitter:card" content="summary_large_image">
@@ -221,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.4k 字
+          3.4k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
           <!-- compatible with older versions-->
-          20 分钟
+          29 分钟
         
       </span>
     
@@ -292,7 +292,7 @@
 <h1 id="mongodb数据访问过程"><a href="#mongodb数据访问过程" class="headerlink" title="mongodb数据访问过程"></a>mongodb数据访问过程</h1><p>MongoDB是个主从架构的数据库（开发中通常使用分片+副本集），以BSON文档的形式存数据库，额外加了些自己的东西，并以二进制编码存储。存储形式是双向链表。</p>
 <p>MongoDB中配置有一个主节点(Primary)，多个从节点(Secondary)，并彼此之间维持心跳，当主节点挂掉后，则发生[选举](<a target="_blank" rel="noopener" href="https://mongoing.com/archives/295">MongoDB的选举过程 | MongoDB中文社区</a>)，其中一个从节点变成</p>
 <p><img src="https://www.runoob.com/wp-content/uploads/2013/12/replication.png" srcset="/MyBlog/img/loading.gif" lazyload alt="MongoDB复制结构图"></p>
-<p>mongos 是 MongoDB 分片集群的访问入口，mongos 收到 Client 访问请求，会根据从 Config Server 获取的路由表将请求转发到后端对应的 Shard 上（通常根据_id做hash）。这里不得不说的一个容易踩坑点：通常采用Updata或者findAndModify对分片数据进行更新操作时，如果没有带分片键（_id）则会操作失败，具体原因可以看：[详解](<a target="_blank" rel="noopener" href="https://blog.wolfogre.com/posts/trap-of-update-on-sharding-mongodb/">在分片的 MongoDB Collection 上做更新操作时需要注意的问题 | Wolfogre&#39;s Blog</a>) （通常为了节省资源，开发环境不会对collection配置分片，导致开发环境没问题，线上update就出错，别问我为什么知道，都是血的教训）</p>
+<p>mongos 是 MongoDB 分片集群的访问入口，mongos 收到 Client 访问请求，会根据从 Config Server 获取的路由表将请求转发到后端对应的 Shard 上（通常根据_id做hash）。这里不得不说的一个容易踩坑点：通常采用Updata或者findAndModify对分片数据进行更新操作时，如果没有带分片键（_id）则会操作失败，具体原因可以看：<a target="_blank" rel="noopener" href="https://blog.wolfogre.com/posts/trap-of-update-on-sharding-mongodb/">在分片的 MongoDB Collection 上做更新操作时需要注意的问题 | Wolfogre&#39;s Blog</a> （通常为了节省资源，开发环境不会对collection配置分片，导致开发环境没问题，线上update就出错，别问我为什么知道，都是血的教训）</p>
 <h1 id="mongos连接池"><a href="#mongos连接池" class="headerlink" title="mongos连接池"></a>mongos连接池</h1><p>mongo 分片架构中，mongos 作为 mongo 分片架构的路由选择器，使用中可能比较困惑的一个问题是 ： 客户端到 mongos 和 mongos 到 mongod 的连接数是什么样的关系？是 1: 1 的关系吗？ mongos 的连接池管理策略又是怎样的？</p>
 <p>mongos和mongod都有各自能承受的组大连接数。通常mongos和mongod的最大连接数默认值是08*ulimit -n 约为65536。 默认情况下 mongos 对客户端连接都是【 每连接每线程 】的模型，每个线程分配 1 M 的内存。mongos 内部有两种类型的连接池：传统的连接池( DBConnectionPool 结构) 和 ASIO 的连接池 ( ConnectionPool 结构)。传统连接池内的连接执行命令不会创建新的线程，是在 mongos 接收的连接创建的线程上执行的，所以不会消耗额外的内存空间。具体可参考：<a target="_blank" rel="noopener" href="https://mongoing.com/archives/30014">深度剖析mongos连接池 | MongoDB中文社区</a></p>
 <p>在实际业务中，要注意启服时大量玩家查询操作触发连接超过连接池及线程上限的情况。</p>
@@ -303,6 +303,32 @@
 <h2 id="2-Hash分片（Hash-based-sharding）"><a href="#2-Hash分片（Hash-based-sharding）" class="headerlink" title="2.Hash分片（Hash based sharding）"></a>2.Hash分片（Hash based sharding）</h2><p> Hash分片是根据shard key计算hash值，并根据hash值按照范围分片的策略将文档分布到不同chunk上的过程。其原理如图:</p>
 <p><img src="/MyBlog/images/5f3f2bd02dcade25208581b3t0bFhCRS01.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
 <p>Hash分片能将文档随机分散到各个chunk上，充分的扩展写能力，弥补了范围分片的不足，但是Hash分片不能高效的服务范围查询，所有的范围查询都要分发到后端所有的Shard才能找出满足条件的文档。</p>
+<h1 id="生产过程中遇到的问题"><a href="#生产过程中遇到的问题" class="headerlink" title="生产过程中遇到的问题"></a>生产过程中遇到的问题</h1><p>这里记录下在线上环境中使用mongo3.4踩过的坑，注意mongo版本不同可能有所区别，但如果你碰巧遇到了同样的表现，也许可以帮你少走一些弯路。</p>
+<h2 id="mongos缓存问题"><a href="#mongos缓存问题" class="headerlink" title="mongos缓存问题"></a>mongos缓存问题</h2><p>表现：线上某玩家自己查看自己的数据表现正常，部分其他玩家查看该玩家的数据发现是空的。自己查看和别人查看代码上唯一的区别是：自己查看走的primary，别人查看走secondary。</p>
+<p>排查过程：登录mongoshell</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">mongo3.4.xx -host 127.0.0.1 -port xxx -uxxx -pxxx db_name<br></code></pre></td></tr></table></figure>
+
+<p>采用secondary查询，发现确实没有数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">db.collection.find(&#123;&#x27;_id&#x27;:&#x27;111&#x27;&#125;).readPref(&quot;secondary&quot;)<br></code></pre></td></tr></table></figure>
+
+<p>采用primary查询，发现有数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">db.collection.find(&#123;&#x27;_id&#x27;:&#x27;111&#x27;&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>然后再次采用secondary查询发现居然有数据了。初步猜测是mongos路由缓存问题，去其他没有执行过primary查询的机器上强制刷新路由：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">db.adminCommand(&quot;flushRouterConfig&quot;)<br></code></pre></td></tr></table></figure>
+
+<p>然后直接采用secondary查询发现好了。</p>
+<p>原因是：mongos充当了mongodb的路由器，路由信息来自于config server，为了减少config server的开销，mongos会缓存config这些元数据。那么什么情况下会更新这些云数据呢？</p>
+<ul>
+<li><p>写操作的时候</p>
+</li>
+<li><p>从primary读取的时候</p>
+</li>
+<li><p>主动调用flushRouterConfig的时候</p>
+</li>
+</ul>
+<p>但是正常来讲，如果config server的路由信息不改变，mongos上缓存不刷新也没问题，但是我们知道，<strong>一个chunk上的数据超过64M（默认值）之后，会分裂（split），而当集群上不同shard上的chunk数据不均衡的是偶会发生chunk迁移（migration），如果发生了迁移，路由信息就会改变，次数如果mongos的缓存没有更新就只能将请求路由到错误的shared上去，导致返回空数据。</strong></p>
+<h2 id="分片更新问题"><a href="#分片更新问题" class="headerlink" title="分片更新问题"></a>分片更新问题</h2><p>这个上面也有提到，就是在做了shard的表上做更新操作时，要记得带分片键（一般是_id）</p>
 <h1 id="常用命令行操作"><a href="#常用命令行操作" class="headerlink" title="常用命令行操作"></a>常用命令行操作</h1><p>命令行登录远程mongos</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">mongo</span> -host <span class="hljs-number">127.0.0.1</span> -port <span class="hljs-number">333</span> -u username -p password dbname<br></code></pre></td></tr></table></figure>
 
@@ -317,8 +343,6 @@
 
 <p>创建表</p>
 <figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sas">db.createCollectio<span class="hljs-meta">n</span>(<span class="hljs-string">&#x27;表名&#x27;</span>)<br></code></pre></td></tr></table></figure>
-
-<h1 id=""><a href="#" class="headerlink" title=""></a></h1>
               
             </div>
             <hr/>
