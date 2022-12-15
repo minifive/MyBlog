@@ -19,14 +19,14 @@
     <meta name="description" content="1.递归删除指定文件起因是python3每次运行完会自动生成一堆__pycache__文件夹。这里希望把这些多余的文件夹已经对应的pyc文件都删除掉，作为程序员，让我手动删除是不可能的，于是写了几行代码搞定： 123456789101112131415161718192021222324252627# coding&#x3D;utf-8import osimport sysimport shutildef">
 <meta property="og:type" content="article">
 <meta property="og:title" content="实用小工具集">
-<meta property="og:url" content="https://minifive.github.io/MyBlog/2022/12/01/%E5%AE%9E%E7%94%A8%E5%B0%8F%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:url" content="https://minifive.github.io/MyBlog/2022/10/13/%E5%AE%9E%E7%94%A8%E5%B0%8F%E5%B7%A5%E5%85%B7/index.html">
 <meta property="og:site_name" content="顾翅的笔记">
 <meta property="og:description" content="1.递归删除指定文件起因是python3每次运行完会自动生成一堆__pycache__文件夹。这里希望把这些多余的文件夹已经对应的pyc文件都删除掉，作为程序员，让我手动删除是不可能的，于是写了几行代码搞定： 123456789101112131415161718192021222324252627# coding&#x3D;utf-8import osimport sysimport shutildef">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://minifive.github.io/MyBlog/images/delay.png">
 <meta property="og:image" content="https://minifive.github.io/MyBlog/images/player_cnt.png">
-<meta property="article:published_time" content="2022-12-01T11:35:21.000Z">
-<meta property="article:modified_time" content="2022-12-15T10:54:11.571Z">
+<meta property="article:published_time" content="2022-10-13T11:35:21.000Z">
+<meta property="article:modified_time" content="2022-12-15T11:08:14.164Z">
 <meta property="article:author" content="顾翅">
 <meta property="article:tag" content="工具">
 <meta name="twitter:card" content="summary_large_image">
@@ -208,8 +208,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-12-01 19:35" pubdate>
-          2022年12月1日 晚上
+        <time datetime="2022-10-13 19:35" pubdate>
+          2022年10月13日 晚上
         </time>
       </span>
     
@@ -294,6 +294,7 @@
 <h1 id="3-画图"><a href="#3-画图" class="headerlink" title="3.画图"></a>3.画图</h1><p>python matplotlib.pyplot是一个非常实用的画图小工具, 可以画折线图、柱状图、饼状图等等</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># coding=utf-8</span><br><span class="hljs-keyword">import</span> random<br><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt<br><span class="hljs-keyword">import</span> sys  <br>reload(sys)  <br>sys.setdefaultencoding(<span class="hljs-string">&#x27;utf-8&#x27;</span>)  <br>plt.rcParams[<span class="hljs-string">&#x27;font.sans-serif&#x27;</span>]=[<span class="hljs-string">&#x27;SimHei&#x27;</span>] <span class="hljs-comment">#用来正常显示中文标签</span><br>plt.rcParams[<span class="hljs-string">&#x27;axes.unicode_minus&#x27;</span>] = <span class="hljs-literal">False</span> <span class="hljs-comment">#用来正常显示负号</span><br><br>city_list = [<span class="hljs-string">&#x27;黑龙江省&#x27;</span>,<span class="hljs-string">&#x27;宁夏&#x27;</span>,<span class="hljs-string">&#x27;辽宁省&#x27;</span>,<span class="hljs-string">&#x27;山西省&#x27;</span>,<span class="hljs-string">&#x27;河北省&#x27;</span>,<span class="hljs-string">&#x27;天津&#x27;</span>,<span class="hljs-string">&#x27;山东省&#x27;</span>,<span class="hljs-string">&#x27;北京&#x27;</span>,<span class="hljs-string">&#x27;内蒙古&#x27;</span>,<span class="hljs-string">&#x27;吉林省&#x27;</span>,<span class="hljs-string">&#x27;河南省&#x27;</span>]<br>colors = [<span class="hljs-string">&#x27;go&#x27;</span>, <span class="hljs-string">&#x27;bo&#x27;</span>, <span class="hljs-string">&#x27;ro&#x27;</span>, <span class="hljs-string">&#x27;yo&#x27;</span>, <span class="hljs-string">&#x27;ko&#x27;</span>, <span class="hljs-string">&#x27;wo&#x27;</span>]<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">drow_delay_plot</span>():<br>    <span class="hljs-string">&quot;&quot;&quot; 点图 &quot;&quot;&quot;</span><br>    dian_xin = []<br>    lian_tong = []<br>    yi_dong = []<br>    <span class="hljs-keyword">for</span> i, city <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(city_list):<br>        d = <span class="hljs-number">50</span> + i<br>        dian_xin.append(d)<br>        y = <span class="hljs-number">60</span> + i<br>        yi_dong.append(y)<br>        l = <span class="hljs-number">70</span> + i<br>        lian_tong.append(l)<br>    <span class="hljs-comment"># 此次绘制多个点</span><br>    plt.plot(city_list, yi_dong, colors[<span class="hljs-number">0</span>], label=<span class="hljs-string">&quot;移动&quot;</span>)<br>    plt.plot(city_list, lian_tong, colors[<span class="hljs-number">1</span>], label=<span class="hljs-string">&quot;联通&quot;</span>)<br>    plt.plot(city_list, dian_xin, colors[<span class="hljs-number">2</span>], label=<span class="hljs-string">&quot;电信&quot;</span>)  <br>    <br>    plt.legend(loc=<span class="hljs-string">&#x27;upper right&#x27;</span>, shadow=<span class="hljs-literal">True</span>) <span class="hljs-comment"># 注解放到右上角</span><br>    plt.xlabel(<span class="hljs-string">&#x27;city&#x27;</span>) <span class="hljs-comment">#设置x轴名称 x label</span><br>    plt.ylabel(<span class="hljs-string">&#x27;delay(ms)&#x27;</span>) <span class="hljs-comment">#设置y轴名称 y label</span><br>    title = <span class="hljs-string">&quot;网络延迟分布&quot;</span>.decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)  <span class="hljs-comment"># 设置标题</span><br>    plt.title(title)<br>    plt.show()<br>      <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">drow_plot_total</span>():<br>    <span class="hljs-string">&quot;&quot;&quot; 柱状图 &quot;&quot;&quot;</span><br>    X = city_list<br>    Y = []<br>    <span class="hljs-keyword">for</span> i, city <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(city_list):<br>        y = <span class="hljs-number">1000.0</span>/ (i+<span class="hljs-number">1</span>) * random.randint(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>)<br>        Y.append(y)<br>    plt.bar(X, Y, fc=<span class="hljs-string">&#x27;r&#x27;</span>)<br>    <span class="hljs-comment"># 绘制横坐标和纵坐标说明</span><br>    <span class="hljs-keyword">for</span> a, b <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(X,Y):  <br>        plt.text(a, b+<span class="hljs-number">0.05</span>, <span class="hljs-string">&#x27;%.2f&#x27;</span> % b, ha=<span class="hljs-string">&#x27;center&#x27;</span>, va= <span class="hljs-string">&#x27;bottom&#x27;</span>,fontsize=<span class="hljs-number">9</span>) <br>    plt.ylabel(<span class="hljs-string">&#x27;cnt&#x27;</span>) <span class="hljs-comment">#设置y轴名称 y label</span><br>    title = <span class="hljs-string">&quot;城市人数分布&quot;</span>.decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)<br>    plt.title(title)<br>    plt.show()<br></code></pre></td></tr></table></figure>
 <p>这里面需要最容易踩的坑就是输出中文.<br>网络延迟分布图如下所示： 另外可通过’bo’等标记后面加’-‘将点图改成折线图<br><img src="/MyBlog/images/delay.png" srcset="/MyBlog/img/loading.gif" lazyload><br>城市人数分布柱状图如下：<br><img src="/MyBlog/images/player_cnt.png" srcset="/MyBlog/img/loading.gif" lazyload><br>这里只展示了matplotlib.pyplot的基础操作，还有很多进阶用法可自行百度。</p>
+<p>[未完待续…]</p>
 
               
             </div>
@@ -339,7 +340,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>实用小工具集</div>
-      <div>https://minifive.github.io/MyBlog/2022/12/01/实用小工具/</div>
+      <div>https://minifive.github.io/MyBlog/2022/10/13/实用小工具/</div>
     </div>
     <div class="license-meta">
       
@@ -351,7 +352,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年12月1日</div>
+          <div>2022年10月13日</div>
         </div>
       
       
@@ -380,6 +381,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/MyBlog/2022/12/15/python%E5%92%8CC-%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B/" title="python和C++混合编程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">python和C++混合编程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
