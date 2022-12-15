@@ -24,14 +24,14 @@
 <meta property="og:description" content="本案例代码逻辑较为简单，主要记录了从python源码排查问题的过程以及python性能分析工具的使用。 背景在做战斗服负载均衡的时候有个场景需要从一个list中查找并删掉一个元素，大多数人可能会跟我一样选择内置函数remove，核心代码如下所示: 123def del_with_inter_func(ll, value):    if value in ll:         ll.remove(">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://minifive.github.io/MyBlog/images/1.png">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/images/2.png">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/images/3.png">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/images/4.png">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/images/5.png">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/images/6.png">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/images/7.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-19-15-38-52-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-19-15-44-56-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-19-20-56-34-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-21-17-37-16-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-21-17-47-03-image.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/2022-07-21-17-47-31-image.png">
 <meta property="article:published_time" content="2022-08-09T14:23:22.000Z">
-<meta property="article:modified_time" content="2022-08-09T14:53:53.472Z">
+<meta property="article:modified_time" content="2022-08-09T14:55:43.051Z">
 <meta property="article:author" content="顾翅">
 <meta property="article:tag" content="性能优化">
 <meta name="twitter:card" content="summary_large_image">
@@ -338,30 +338,30 @@
 <p>采用pstats查看结果，并按照消耗时间time排序</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">python -c <span class="hljs-string">&quot;import pstats; p=pstats.Stats(&#x27;test_del.out&#x27;); p.sort_stats(&#x27;time&#x27;).print_stats()&quot;</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="/MyBlog/images/2.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p><img src="/MyBlog/images/2022-07-19-15-38-52-image.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
 <p>这里打印出了各个函数调用的次数以及占用的时间，但是结果不够直观。我们继续通过火焰图形式显示函数调用栈：（需要安装flameprof）</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">pip install flameprof <span class="hljs-comment"># 安装flameprof</span><br><span class="hljs-comment"># 去python/Lib/site-packages中找到flameprof.py</span><br>python flameprof.py test_del.out &gt; test_del.svg<br></code></pre></td></tr></table></figure>
 
 <p>然后浏览器打开test_del.svg结果如下图所示：</p>
-<p><img src="/MyBlog/images/3.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p><img src="/MyBlog/images/2022-07-19-15-44-56-image.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
 <p>火焰图能看到各个函数调用时间占比，但调用栈似乎显示不全，我们改用Qcachegrind(Kcachegrind)查阅表格化结果。</p>
 <p>Qcachegrind读取的文件格式是callgrind格式，不能直接支持python生成的profile记录。因此需要先使用pyprof2calltree工具进行转换：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">pip install pyprof2calltree <span class="hljs-comment"># 如果没安装的话</span><br>pyprof2calltree -i test_del.out <span class="hljs-comment">#会生成一个test_del.out.log文件</span><br></code></pre></td></tr></table></figure>
 
 <p>用Qcachegrind打开test_del.out.log文件, 如果没有可以先去下面的连接下载然后解压到文件夹，双击qcachegrind.exe运行，然后打开test_del.out.log文件即可。</p>
 <p><a target="_blank" rel="noopener" href="https://sourceforge.net/projects/qcachegrindwin/?source=typ_redirect">QCacheGrind 包体下载</a></p>
-<p><img src="/MyBlog/images/4.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p><img src="/MyBlog/images/2022-07-19-20-56-34-image.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
 <p>通过上面的分析可以看出，del_custom中唯一的函数调用len()虽然调用了1000次，但运行时间占比只有0.01%，并不是性能损耗的关键。难道问题出在参数传递的过程中？</p>
 <p>我们保留len()函数调用，但将遍历的list长度改为固定值：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">del_custom2</span>(<span class="hljs-params">ll, value</span>):<br>    s = <span class="hljs-built_in">len</span>(ll)<br>    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> xrange(<span class="hljs-number">999</span>):<br>        <span class="hljs-keyword">if</span> ll[j] != value: <br>            <span class="hljs-keyword">continue</span> <br>        <span class="hljs-keyword">del</span> ll[j]<br>        <span class="hljs-keyword">break</span><br></code></pre></td></tr></table></figure>
 
 <p>然后运行发现耗时直接下降了一个数量级</p>
-<p><img src="/MyBlog/images/5.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p><img src="/MyBlog/images/2022-07-21-17-37-16-image.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
 <p>针对del_custom和del_custom2我们来看下运行的指令码：</p>
 <figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stata">import <span class="hljs-keyword">dis</span><br><span class="hljs-keyword">dis</span>.<span class="hljs-keyword">dis</span>(del_custom)<br><span class="hljs-keyword">dis</span>.<span class="hljs-keyword">dis</span>(del_custom2)<br></code></pre></td></tr></table></figure>
 
-<p><img src="/MyBlog/images/6.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
-<p><img src="/MyBlog/images/7.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p><img src="/MyBlog/images/2022-07-21-17-47-03-image.png" srcset="/MyBlog/img/loading.gif" lazyload alt="2022-07-21-17-47-03-image.png"></p>
+<p><img src="/MyBlog/images/2022-07-21-17-47-31-image.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
 <p>发现del_custom和del_custom2指令码唯一的区别在上图箭头所在位置 LOAD_FAST 和LOAD_CONST。接下来直接去ceval.c查找下这两个指令的实现：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// ceval.c</span><br><span class="hljs-comment">// LOAD_FAST</span><br>TARGET(LOAD_FAST)<br>&#123;<br>    x = GETLOCAL(oparg); <span class="hljs-comment">// 从f-&gt;f_localsplus中获取第i个元素</span><br>    <span class="hljs-keyword">if</span> (x != <span class="hljs-literal">NULL</span>) &#123;<br>        Py_INCREF(x);<br>        PUSH(x);<br>        FAST_DISPATCH();<br>    &#125;<br>    format_exc_check_arg(PyExc_UnboundLocalError,<br>        UNBOUNDLOCAL_ERROR_MSG,<br>        PyTuple_GetItem(co-&gt;co_varnames, oparg));<br>    <span class="hljs-keyword">break</span>;<br>&#125;<br><br><span class="hljs-comment">// LOAD_CONST</span><br>TARGET(LOAD_CONST)<br>&#123;<br>    x = GETITEM(consts, oparg); <span class="hljs-comment">//从co-&gt;co_consts中获取第i个元素</span><br>    Py_INCREF(x);<br>    PUSH(x);<br>    FAST_DISPATCH();<br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -455,6 +455,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/MyBlog/2022/12/01/%E5%AE%9E%E7%94%A8%E5%B0%8F%E5%B7%A5%E5%85%B7/" title="实用小工具集">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">实用小工具集</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
