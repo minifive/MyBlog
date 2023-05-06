@@ -16,25 +16,28 @@
   <meta name="author" content="顾翅">
   <meta name="keywords" content="">
   
-    <meta name="description" content="python和C++混合编程我们知道python是c语言编写的，python可调用c方法同时，c也可调用python模块 Python和C++混合编程主要分为两方面：  在Python中使用C++编写的库； 在C++中使用Python语义（嵌入Python，操作Python标准库和第三方库）；  Python与C++是通过一个虚拟机来进行交互的，因此要实现C++与Python的互相调用，必须先启动">
+    <meta name="description" content="服务器限流服务限流服务是服务端常用的保证进程稳定性的手段，常见的限流算法有：计数器、固定窗口，滑动窗口、漏桶、令牌桶 1.计数器算法计数器算法是限流算法里最简单也是最容易实现的一种算法。比如我们规定，对于A接口来说，我们1分钟的访问次数不能超过100个。 那么我们可以每一分钟重置下计数器counter，当请求到来时，如果距离上次重置计数器在一分钟以内就将counter加1，如果1分钟内counte">
 <meta property="og:type" content="article">
-<meta property="og:title" content="python和C++混合编程">
-<meta property="og:url" content="https://minifive.github.io/MyBlog/2022/12/15/python%E5%92%8CC-%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:title" content="常见服务器限流算法及实现">
+<meta property="og:url" content="https://minifive.github.io/MyBlog/2023/05/06/%E5%B8%B8%E8%A7%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/index.html">
 <meta property="og:site_name" content="顾翅的笔记">
-<meta property="og:description" content="python和C++混合编程我们知道python是c语言编写的，python可调用c方法同时，c也可调用python模块 Python和C++混合编程主要分为两方面：  在Python中使用C++编写的库； 在C++中使用Python语义（嵌入Python，操作Python标准库和第三方库）；  Python与C++是通过一个虚拟机来进行交互的，因此要实现C++与Python的互相调用，必须先启动">
+<meta property="og:description" content="服务器限流服务限流服务是服务端常用的保证进程稳定性的手段，常见的限流算法有：计数器、固定窗口，滑动窗口、漏桶、令牌桶 1.计数器算法计数器算法是限流算法里最简单也是最容易实现的一种算法。比如我们规定，对于A接口来说，我们1分钟的访问次数不能超过100个。 那么我们可以每一分钟重置下计数器counter，当请求到来时，如果距离上次重置计数器在一分钟以内就将counter加1，如果1分钟内counte">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/images/20221215114050image.png">
-<meta property="og:image" content="https://minifive.github.io/MyBlog/images/20221215152721image.png">
-<meta property="article:published_time" content="2022-12-15T10:58:49.000Z">
-<meta property="article:modified_time" content="2022-12-15T11:23:31.209Z">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-bd04d1f09aca34d8805b7a256674ba21_720w.webp">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-21d2f4d147c28dcba3e7a448a7fd6924_720w.webp">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-a2a403b505a5d387a95eeed76a5515c1_720w.webp">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-fcd054bc771bf1856d6428837815582e_720w.webp">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-c1186190a3ab7bcb6c24ac6a5cd13fc7_720w.webp">
+<meta property="article:published_time" content="2023-05-06T09:44:30.000Z">
+<meta property="article:modified_time" content="2023-05-06T09:50:38.964Z">
 <meta property="article:author" content="顾翅">
-<meta property="article:tag" content="技术">
+<meta property="article:tag" content="性能优化">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://minifive.github.io/MyBlog/images/20221215114050image.png">
+<meta name="twitter:image" content="https://pic2.zhimg.com/80/v2-bd04d1f09aca34d8805b7a256674ba21_720w.webp">
   
   
   
-  <title>python和C++混合编程 - 顾翅的笔记</title>
+  <title>常见服务器限流算法及实现 - 顾翅的笔记</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -197,7 +200,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="python和C++混合编程"></span>
+            <span id="subtitle" data-typed-text="常见服务器限流算法及实现"></span>
           
         </div>
 
@@ -208,8 +211,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-12-15 18:58" pubdate>
-          2022年12月15日 晚上
+        <time datetime="2023-05-06 17:44" pubdate>
+          2023年5月6日 下午
         </time>
       </span>
     
@@ -220,7 +223,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.6k 字
+          3.7k 字
         
       </span>
     
@@ -232,7 +235,7 @@
         
         
           <!-- compatible with older versions-->
-          30 分钟
+          32 分钟
         
       </span>
     
@@ -278,57 +281,37 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">python和C++混合编程</h1>
+            <h1 style="display: none">常见服务器限流算法及实现</h1>
             
             <div class="markdown-body">
               
-              <h1 id="python和C-混合编程"><a href="#python和C-混合编程" class="headerlink" title="python和C++混合编程"></a>python和C++混合编程</h1><p>我们知道python是c语言编写的，python可调用c方法同时，c也可调用python模块</p>
-<p>Python和C++混合编程主要分为两方面：</p>
-<ul>
-<li><strong>在Python中使用C++编写的库；</strong></li>
-<li><strong>在C++中使用Python语义（嵌入Python，操作Python标准库和第三方库）；</strong></li>
-</ul>
-<p>Python与C++是通过一个虚拟机来进行交互的，因此要实现C++与Python的互相调用，必须先启动一个虚拟机。启动并使用一个Python虚拟机只需要简单的几步：</p>
-<ol>
-<li>包含python.h头文件</li>
-<li>调用Py_Initialize()启动虚拟机（初始化）</li>
-<li>C++与Python互相调用</li>
-<li>使⽤Py_Finalize()关闭虚拟机（撤销初始化的所有操作）</li>
-</ol>
-<h2 id="1-C-调用Python"><a href="#1-C-调用Python" class="headerlink" title="1.C++调用Python"></a>1.C++调用Python</h2><p>在C++中调用Python中的对象，关键是要在C++中能引用Python对象。我们先回顾一下Python中是怎么做的，假设在Game目录下有MyGame.py、Hero.py两个文件（模块）</p>
-<p>这些通过Python语言编写的逻辑最终都发生在Python虚拟机中，如果说通过C++语言也能在Python虚拟机中实现上述逻辑，是不是就可以实现C++对Python对象的调用？是的，</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">//第一步：导入Hero模块</span><br>PyObject* HeroMoudle = <span class="hljs-built_in">PyImport_ImportModule</span>(<span class="hljs-string">&quot;Game.Hero&quot;</span>);<br><br><span class="hljs-comment">//第二步：在Hero的dict中获取FUNCClass类</span><br>PyObject* HeroMoudleDict = <span class="hljs-built_in">PyModule_GetDict</span>(HeroMoudle);<br>PyObject* FUNCClass = <span class="hljs-built_in">PyDict_GetItemString</span>(HeroMoudleDict, <span class="hljs-string">&quot;FUNCClass&quot;</span>);<br><br><span class="hljs-comment">//第三步：实例化FUNCClass类</span><br>PyObject* HeroFUNCClass = <span class="hljs-built_in">PyObject_CallObject</span>(FUNCClass, <span class="hljs-literal">NULL</span>);<br>PyObject* ret = <span class="hljs-built_in">PyObject_CallMethod</span>(HeroFUNCClass, <span class="hljs-string">&quot;say&quot;</span>, <span class="hljs-string">&quot;s&quot;</span>, <span class="hljs-string">&quot;Don&#x27;t run, monster&quot;</span>)<br></code></pre></td></tr></table></figure>
+              <h1 id="服务器限流服务"><a href="#服务器限流服务" class="headerlink" title="服务器限流服务"></a>服务器限流服务</h1><p>限流服务是服务端常用的保证进程稳定性的手段，常见的限流算法有：<strong>计数器、固定窗口，滑动窗口、漏桶、令牌桶</strong></p>
+<h2 id="1-计数器算法"><a href="#1-计数器算法" class="headerlink" title="1.计数器算法"></a><strong>1.计数器算法</strong></h2><p>计数器算法是限流算法里最简单也是最容易实现的一种算法。比如我们规定，对于A接口来说，我们1分钟的访问次数不能超过100个。</p>
+<p>那么我们可以每一分钟重置下计数器counter，当请求到来时，如果距离上次重置计数器在一分钟以内就将counter加1，如果1分钟内counter的值大于100则说明请求过多，需要限流，具体算法的示意图如下：</p>
+<p><img src="https://pic2.zhimg.com/80/v2-bd04d1f09aca34d8805b7a256674ba21_720w.webp" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>这个算法虽然简单，但是<strong>存在临界问题</strong>，我们看下图：</p>
+<p><img src="https://pic1.zhimg.com/80/v2-21d2f4d147c28dcba3e7a448a7fd6924_720w.webp" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>假设一个用户，他在0:59时，瞬间发送了100个请求，并且1:00又瞬间发送了100个请求，那么其实这个用户在 1秒里面，瞬间发送了200个请求。也就是该玩家在1秒内请求量达到了限流上限的2倍，会对服务器造成瞬时压力。</p>
+<h2 id="2-滑动窗口"><a href="#2-滑动窗口" class="headerlink" title="2. 滑动窗口"></a><strong>2. 滑动窗口</strong></h2><p>滑动窗口，又称rolling window。可解决计数算法的临界问题。类似于TCP中的滑动窗口算法，我们在计算counter的时候并不是计算0:00~1:00这样固定的时间窗口的请求总数，而是计算距离当前最近1分钟的请求总量，这样就可避免请求量短时间内突破限流上限。</p>
+<p><img src="https://pic2.zhimg.com/80/v2-a2a403b505a5d387a95eeed76a5515c1_720w.webp" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>如上图中，我们将1分钟按照每10s划分为6个格子，每个格子有自己单独的计数器组成一个count_lst。当新请求到来时，首先根据上次请求时间与当前时间差对窗口进行移动，新请求其所属时间格子一定是最后一个10s内，因此可以直接count_lst[-1]+&#x3D;1。在滑动窗口中我们统计最近1分钟的计数器之和来进行限流。</p>
+<h2 id="3-令牌桶算法"><a href="#3-令牌桶算法" class="headerlink" title="3.令牌桶算法"></a><strong>3.令牌桶算法</strong></h2><p>滑动窗口虽然解决了瞬时请求过大问题，但是并不要求请求在时间窗口中均匀分布，令牌桶算法则可以限制请求速率。我们将请求发行的凭证称之为令牌，请求只有获取到合法令牌才能避免被限流，而令牌桶算法会限制最大令牌数量即桶的容量，并且当令牌桶没有满的时候会定时产生一定数量的令牌加入到桶中。每个请求会消耗一些令牌，如果令牌容量小于单次请求消耗的令牌数量，则请求被限制。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-fcd054bc771bf1856d6428837815582e_720w.webp" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>缺点：令牌桶，假如系统上线时没有预热，那么可能会出现由于此时桶中还没有令牌，而导致请求被误杀的情况</p>
+<h2 id="4-漏桶算法"><a href="#4-漏桶算法" class="headerlink" title="4.漏桶算法"></a><strong>4.漏桶算法</strong></h2><p>令牌桶算法缓存请求通行的凭证，而漏桶算法则是缓存请求；漏桶算法的基本思想是，流量持续进入漏桶中，底部则<strong>定速处理</strong>请求，如果流量进入的速率高于底部请求被处理的速率，且当桶中的流量超过桶的大小时，流量就会被溢出。具体如下图所示：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-c1186190a3ab7bcb6c24ac6a5cd13fc7_720w.webp" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>漏桶中由于请求是暂存在桶中的，所以请求什么时候能被处理，则是有延时的。</p>
+<h2 id="5-限流服务实现"><a href="#5-限流服务实现" class="headerlink" title="5.限流服务实现"></a>5.限流服务实现</h2><p>由于使用场景和服务器架构的不同，应该选用不同的限流算法。相比单一机器或者进程的限流服务，分布式服务器架构中的限流服务相对复杂一些。本质上单机限流和分布式限流的区别其实在于 “计数器” 存放的位置。</p>
+<p>针对单机限流，我们可以直接将计数器存放到内存中，以下是python实现的滑动窗口单机限流源码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SlidingWindow</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-string">&quot;&quot;&quot; </span><br><span class="hljs-string">        滑动窗口限流本进程使用</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, window_size, window_ts, threshold</span>):<br>        self.window_size = window_size          <span class="hljs-comment"># 窗口大小</span><br>        self.window_unit_ts = window_ts         <span class="hljs-comment"># 窗口时间单元 单位：秒</span><br>        self.threshold = threshold              <span class="hljs-comment"># 最大请求次数</span><br>        self.count_lst = []                     <span class="hljs-comment"># 记录单元次数</span><br>        self.last_refresh_time = <span class="hljs-number">0</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">init_count_lst</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-string">&quot;&quot;&quot; </span><br><span class="hljs-string">            初始化滑动窗口</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        self.count_lst = [<span class="hljs-number">0</span> <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> xrange(self.window_size)]<br>        now = time.time()<br>        self.last_refresh_time = now - now % self.window_unit_ts<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">refresh_count_lst</span>(<span class="hljs-params">self, now</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">            更新滑动窗口</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        expire_unit = <span class="hljs-built_in">int</span>((now - self.last_refresh_time) / self.window_unit_ts)<br>        expire_unit = <span class="hljs-built_in">min</span>(expire_unit, self.window_size)<br>        self.count_lst = self.count_lst[expire_unit:]<br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> xrange(self.window_size - <span class="hljs-built_in">len</span>(self.count_lst)):<br>            self.count_lst.append(<span class="hljs-number">0</span>)<br>        self.last_refresh_time = now - now % self.window_unit_ts<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">try_request</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">            尝试请求</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        now = time.time()<br>        self.refresh_count_lst(now)<br>        <span class="hljs-keyword">if</span> <span class="hljs-built_in">sum</span>(self.count_lst) &gt;= self.threshold:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span><br>        self.count_lst[-<span class="hljs-number">1</span>] += <span class="hljs-number">1</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span><br></code></pre></td></tr></table></figure>
 
-<h2 id="2-Python调用C"><a href="#2-Python调用C" class="headerlink" title="2.Python调用C++"></a>2.Python调用C++</h2><p>python调用C++有两种方法：</p>
-<ol>
-<li><p>使用python扩展</p>
-</li>
-<li><p>使用ctypes直接加载so</p>
-</li>
-</ol>
-<p>  Python的可扩展性具有的优点：方便为语言增加新功能、具有可定制性、代码可以实现复用等。这种方法要引入Python中的一个重要的类PyObject和一个重要的接口函数PyArg_ParseTuple: 例如</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// test.c</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;Python.h&gt;</span> </span><br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">fab</span><span class="hljs-params">(<span class="hljs-type">int</span> n)</span> </span><br><span class="hljs-function"></span>&#123; <br>  <span class="hljs-keyword">if</span> (n == <span class="hljs-number">1</span> || n == <span class="hljs-number">0</span>) <br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>; <br>  <span class="hljs-keyword">else</span> <br>    <span class="hljs-keyword">return</span> n * <span class="hljs-built_in">fab</span>(n - <span class="hljs-number">1</span>); <br>&#125; <br><br><span class="hljs-function"><span class="hljs-type">char</span> *<span class="hljs-title">reverse</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span>  </span><br><span class="hljs-function"></span>&#123;  <br>    <span class="hljs-keyword">register</span> <span class="hljs-type">char</span> t,  <br>            *p = s,  <br>            *q = (s + (<span class="hljs-built_in">strlen</span>(s) - <span class="hljs-number">1</span>));  <br><br>    <span class="hljs-keyword">while</span> (s &amp;&amp; (p &lt; q))  <br>    &#123;  <br>        t = *p;  <br>        *p++ = *q;  <br>        *q-- = t;  <br>    &#125;  <br>    <span class="hljs-keyword">return</span>(s);  <br>&#125; <br><br><span class="hljs-function">PyObject* <span class="hljs-title">wrap_fab</span><span class="hljs-params">(PyObject* self, PyObject* args)</span> </span><br><span class="hljs-function"></span>&#123; <br>  <span class="hljs-type">int</span> n, result; <br>  <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">PyArg_ParseTuple</span>(args, <span class="hljs-string">&quot;i:fab&quot;</span>, &amp;n)) <br>      <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>; <br>  result = <span class="hljs-built_in">fab</span>(n); <br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Py_BuildValue</span>(<span class="hljs-string">&quot;i&quot;</span>, result); <br>&#125; <br><br><span class="hljs-function">PyObject* <span class="hljs-title">wrap_reverse</span><span class="hljs-params">(PyObject* self, PyObject* args)</span></span><br><span class="hljs-function"></span>&#123;<br>   <span class="hljs-type">char</span>* orig_str;<br>   <span class="hljs-type">char</span>* dupe_str;<br>   PyObject* retVal;<br><br>   <span class="hljs-keyword">if</span>(!<span class="hljs-built_in">PyArg_ParseTuple</span>(args,<span class="hljs-string">&quot;s:reverse&quot;</span>,&amp;orig_str))<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>   dupe_str = <span class="hljs-built_in">reverse</span>(<span class="hljs-built_in">strdup</span>(orig_str));<br>   retVal = (PyObject*)<span class="hljs-built_in">Py_BuildValue</span>(<span class="hljs-string">&quot;ss&quot;</span>,orig_str,dupe_str);<br>   <span class="hljs-built_in">free</span>(dupe_str);<br><span class="hljs-keyword">return</span> retVal;<br>&#125;<br><br><span class="hljs-type">static</span> PyMethodDef exampleMethods[] = <br>&#123; <br><span class="hljs-comment">//&#123;python中使用的函数名，C++中的函数指针, 函数标记，函数注释&#125;</span><br>  &#123;<span class="hljs-string">&quot;fab&quot;</span>, wrap_fab, METH_VARARGS, <span class="hljs-string">&quot;Caculate N!&quot;</span>&#125;, <br>  &#123;<span class="hljs-string">&quot;reverse&quot;</span>,wrap_reverse,METH_VARARGS,<span class="hljs-string">&quot;reverse string&quot;</span>&#125;,<br>  &#123;<span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>&#125; <br>&#125;; <br><br><span class="hljs-comment">// 将上面的函数接口打包成example模块(注意函数名需要是initxxx，xxx是模块名)</span><br><span class="hljs-comment">// 且必须是c形式的函数</span><br><span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span> <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">initexample</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span></span><br><span class="hljs-function"></span>&#123;<br>    PyObject* m; <br>    m = <span class="hljs-built_in">Py_InitModule</span>(<span class="hljs-string">&quot;example&quot;</span>, exampleMethods); <br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上述代码中定义了窗口大小，每个窗口单元的时间长度，请求阈值，基于这三个值就可以实现单机限流服务了。另外窗口计数器需要随时间更新，可定时对count_lt进行更新，也可在每次请求到来时先检查窗口状态，这里采用请求时更新。</p>
+<p>分布式限流可基redis做中心节点，例如滑动窗口的每个请求的时间记录可以利用 redis 的 <code>zset</code> 存储，利用<code>ZREMRANGEBYSCORE</code> 删除时间窗口之外的数据，再用 <code>ZCARD</code>计数。<strong>需要注意的是操作redis的原子性</strong>，采用lua脚本操作redis可解决原子操作的问题，如下是lua+redis实现的令牌桶算法。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-keyword">local</span> key = KEYS[<span class="hljs-number">1</span>]<br><span class="hljs-keyword">local</span> max_permits = <span class="hljs-built_in">tonumber</span>(ARGV[<span class="hljs-number">1</span>])<br><span class="hljs-keyword">local</span> permits_per_second = <span class="hljs-built_in">tonumber</span>(ARGV[<span class="hljs-number">2</span>])<br><span class="hljs-keyword">local</span> required_permits = <span class="hljs-built_in">tonumber</span>(ARGV[<span class="hljs-number">3</span>])<br><span class="hljs-keyword">local</span> last_free_ticket_micros = <span class="hljs-built_in">tonumber</span>(redis.call(<span class="hljs-string">&#x27;hget&#x27;</span>, key, <span class="hljs-string">&#x27;last_free_ticket_micros&#x27;</span>) <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>)<br><span class="hljs-keyword">local</span> <span class="hljs-built_in">time</span> = redis.call(<span class="hljs-string">&#x27;time&#x27;</span>)<br><span class="hljs-keyword">local</span> now_micros = <span class="hljs-built_in">tonumber</span>(<span class="hljs-built_in">time</span>[<span class="hljs-number">1</span>]) * <span class="hljs-number">1000000</span> + <span class="hljs-built_in">tonumber</span>(<span class="hljs-built_in">time</span>[<span class="hljs-number">2</span>])<br><span class="hljs-keyword">local</span> stored_permits = <span class="hljs-built_in">tonumber</span>(redis.call(<span class="hljs-string">&#x27;hget&#x27;</span>, key, <span class="hljs-string">&#x27;stored_permits&#x27;</span>) <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>)<br><span class="hljs-keyword">local</span> stable_interval_micros = <span class="hljs-number">1000000</span> / permits_per_second<br><span class="hljs-keyword">if</span> (now_micros &gt; last_free_ticket_micros) <span class="hljs-keyword">then</span><br>    <span class="hljs-keyword">local</span> new_permits = (now_micros - last_free_ticket_micros) / stable_interval_micros<br>    stored_permits = <span class="hljs-built_in">math</span>.<span class="hljs-built_in">min</span>(max_permits, stored_permits + new_permits)<br>    last_free_ticket_micros = now_micros<br><span class="hljs-keyword">end</span><br><span class="hljs-keyword">local</span> res = <span class="hljs-number">0</span><br><span class="hljs-keyword">if</span> (stored_permits &gt;= required_permits) <span class="hljs-keyword">then</span><br>    stored_permits = stored_permits - required_permits<br>    res = <span class="hljs-number">1</span><br><span class="hljs-keyword">end</span><br>redis.call(<span class="hljs-string">&#x27;hset&#x27;</span>, key, <span class="hljs-string">&#x27;stored_permits&#x27;</span>, stored_permits)<br>redis.call(<span class="hljs-string">&#x27;hset&#x27;</span>, key, <span class="hljs-string">&#x27;last_free_ticket_micros&#x27;</span>, last_free_ticket_micros)<br><span class="hljs-keyword">return</span> res<br></code></pre></td></tr></table></figure>
 
-<p>将test.c编译成so</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">gcc -fPIC test.c -o example.so -shared  -I /usr/include/python2.7<br></code></pre></td></tr></table></figure>
-
-<p>python中调用c++方法如下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> example<br><span class="hljs-built_in">print</span> example.fab(<span class="hljs-number">4</span>)<br><span class="hljs-built_in">print</span> example.reverse(<span class="hljs-string">&quot;xujiwei&quot;</span>)<br></code></pre></td></tr></table></figure>
-
-<p>使用python扩展可以看到，原生c++方法需要先被wrap_fab封装成python可调用的外部方法，然后打包到模块中</p>
-<p><img src="/MyBlog/images/20221215114050image.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
-<p>第二种方法是调用Python的自有模块ctypes，其中cdll &#x3D; &lt;ctypes.LibraryLoader object&gt;是一个库加载器对象，调用cdll.LoadLibrary便可调用C++的so库。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">//test1.cpp</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;C&quot;</span>&#123; <span class="hljs-comment">// 重要，因为使用g++编译时函数名会改变，比方print_msg(const char*)</span><br>            <span class="hljs-comment">// 会编译成函数名 print_msg_char，这会导致python调用这个函数的时候</span><br>            <span class="hljs-comment">// 找不到对应的函数名，这有加了 extern &quot;C&quot;，才会以C语言的方式进行</span><br>            <span class="hljs-comment">// 编译，这样不会改变函数名字</span><br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">print_msg</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* s)</span></span><br><span class="hljs-function">        </span>&#123;<br>           std::cout&lt;&lt;s&lt;&lt;std::endl;<br>        &#125;<br><br>        <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">add_Integer</span><span class="hljs-params">(<span class="hljs-type">int</span> a,<span class="hljs-type">int</span> b)</span></span><br><span class="hljs-function">        </span>&#123;<br>                <span class="hljs-keyword">return</span> a+b;<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>编译</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">g++ -fPIC test1.cpp -o example.so -shared  -I/usr/include/python2.7<br></code></pre></td></tr></table></figure>
-
-<p>注意c++代码要用g++编译，用gcc编译完加载so的时候可能会报错OSError: &#x2F;mnt&#x2F;e&#x2F;workspace&#x2F;zx&#x2F;test_python_cpp&#x2F;example2.so: undefined symbol: <em>ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6</em></p>
-<p>原因是gcc不会链接C++的库文件，比如std</p>
-<p>python中使用</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> ctypes <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">import</span> os<br>sotest = cdll.LoadLibrary(os.getcwd()+<span class="hljs-string">&quot;/example2.so&quot;</span>)<br>sotest.print_msg(<span class="hljs-string">&quot;hhhhh&quot;</span>)<br>sotest.add_Integer(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)<br></code></pre></td></tr></table></figure>
-
-<p><img src="/MyBlog/images/20221215152721image.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>python层可通过封装redis的EVAL或者EVALSHA命令来运行lua脚本</p>
+<h2 id="限流的难点"><a href="#限流的难点" class="headerlink" title="限流的难点"></a><strong>限流的难点</strong></h2><p>可以看到每个限流都有个阈值，这个阈值如何定是个难点。定大了服务器可能顶不住，定小了就“误杀”了，没有资源利用最大化，对用户体验不好。</p>
+<p>最好的办法是能动态地调整限流的阈值，于是可以基于TCP拥塞控制的思想，根据请求响应在一个时间段的响应时间来确定此时服务器的健康状况，从而动态调整限流阈值。</p>
 
               
             </div>
@@ -349,13 +332,6 @@
   <a href="/MyBlog/categories/python/" class="category-chain-item">python</a>
   
   
-    <span>></span>
-    
-  <a href="/MyBlog/categories/python/C/" class="category-chain-item">C++</a>
-  
-  
-
-  
 
       </span>
     
@@ -368,7 +344,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/MyBlog/tags/%E6%8A%80%E6%9C%AF/">#技术</a>
+        <a href="/MyBlog/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">#性能优化</a>
       
     </div>
   
@@ -380,8 +356,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>python和C++混合编程</div>
-      <div>https://minifive.github.io/MyBlog/2022/12/15/python和C-混合编程/</div>
+      <div>常见服务器限流算法及实现</div>
+      <div>https://minifive.github.io/MyBlog/2023/05/06/常见服务器限流算法及实现/</div>
     </div>
     <div class="license-meta">
       
@@ -393,7 +369,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年12月15日</div>
+          <div>2023年5月6日</div>
         </div>
       
       
@@ -423,18 +399,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/MyBlog/2023/05/06/%E5%B8%B8%E8%A7%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/" title="常见服务器限流算法及实现">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">常见服务器限流算法及实现</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/MyBlog/2022/10/13/%E5%AE%9E%E7%94%A8%E5%B0%8F%E5%B7%A5%E5%85%B7/" title="实用小工具集">
-                        <span class="hidden-mobile">实用小工具集</span>
+                      <a href="/MyBlog/2022/12/15/python%E5%92%8CC-%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B/" title="python和C++混合编程">
+                        <span class="hidden-mobile">python和C++混合编程</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
