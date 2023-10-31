@@ -16,28 +16,34 @@
   <meta name="author" content="顾翅">
   <meta name="keywords" content="">
   
-    <meta name="description" content="服务器限流服务限流服务是服务端常用的保证进程稳定性的手段，常见的限流算法有：计数器、固定窗口，滑动窗口、漏桶、令牌桶 1.计数器算法计数器算法是限流算法里最简单也是最容易实现的一种算法。比如我们规定，对于A接口来说，我们1分钟的访问次数不能超过100个。 那么我们可以每一分钟重置下计数器counter，当请求到来时，如果距离上次重置计数器在一分钟以内就将counter加1，如果1分钟内counte">
+    <meta name="description" content="机器学习实战在机器学习里，每一行数据被看做一个样本，每一列数据被看做一个特征，可根据输入数据的维度建立不同自变量个数的模型进行拟合。  损失函数在对数据模型的训练中，预测值与真实值会存在一定的偏差。当误差值最小时，可以看做模型最优解。损失函数就是用来评价模型的预测值和真实值不一样的程度，当损失值越小，证明预计值越接近真实值，模型的训练程度就越好。为了让预测值 y^ (i)  尽量接近于真实值 y(">
 <meta property="og:type" content="article">
-<meta property="og:title" content="常见服务器限流算法及实现">
-<meta property="og:url" content="https://minifive.github.io/MyBlog/2023/05/06/%E5%B8%B8%E8%A7%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:title" content="机器学习之梯度下降法">
+<meta property="og:url" content="https://minifive.github.io/MyBlog/2023/10/31/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/index.html">
 <meta property="og:site_name" content="顾翅的笔记">
-<meta property="og:description" content="服务器限流服务限流服务是服务端常用的保证进程稳定性的手段，常见的限流算法有：计数器、固定窗口，滑动窗口、漏桶、令牌桶 1.计数器算法计数器算法是限流算法里最简单也是最容易实现的一种算法。比如我们规定，对于A接口来说，我们1分钟的访问次数不能超过100个。 那么我们可以每一分钟重置下计数器counter，当请求到来时，如果距离上次重置计数器在一分钟以内就将counter加1，如果1分钟内counte">
+<meta property="og:description" content="机器学习实战在机器学习里，每一行数据被看做一个样本，每一列数据被看做一个特征，可根据输入数据的维度建立不同自变量个数的模型进行拟合。  损失函数在对数据模型的训练中，预测值与真实值会存在一定的偏差。当误差值最小时，可以看做模型最优解。损失函数就是用来评价模型的预测值和真实值不一样的程度，当损失值越小，证明预计值越接近真实值，模型的训练程度就越好。为了让预测值 y^ (i)  尽量接近于真实值 y(">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://pic2.zhimg.com/80/v2-bd04d1f09aca34d8805b7a256674ba21_720w.webp">
-<meta property="og:image" content="https://pic1.zhimg.com/80/v2-21d2f4d147c28dcba3e7a448a7fd6924_720w.webp">
-<meta property="og:image" content="https://pic2.zhimg.com/80/v2-a2a403b505a5d387a95eeed76a5515c1_720w.webp">
-<meta property="og:image" content="https://pic3.zhimg.com/80/v2-fcd054bc771bf1856d6428837815582e_720w.webp">
-<meta property="og:image" content="https://pic4.zhimg.com/80/v2-c1186190a3ab7bcb6c24ac6a5cd13fc7_720w.webp">
-<meta property="article:published_time" content="2023-05-06T09:44:30.000Z">
-<meta property="article:modified_time" content="2023-05-06T09:50:38.964Z">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/201903162215018.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/gradinet3.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/gradinet4.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/gradinet5.jpg">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/gradinet6.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/gradinet7.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/gradinet8.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/gradinet10.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/gradinet11.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/gradinet0.png">
+<meta property="og:image" content="https://minifive.github.io/MyBlog/images/gradinet1.png">
+<meta property="article:published_time" content="2023-10-31T11:27:05.000Z">
+<meta property="article:modified_time" content="2023-10-31T11:47:05.611Z">
 <meta property="article:author" content="顾翅">
-<meta property="article:tag" content="性能优化">
+<meta property="article:tag" content="机器学习">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://pic2.zhimg.com/80/v2-bd04d1f09aca34d8805b7a256674ba21_720w.webp">
+<meta name="twitter:image" content="https://minifive.github.io/MyBlog/images/201903162215018.png">
   
   
   
-  <title>常见服务器限流算法及实现 - 顾翅的笔记</title>
+  <title>机器学习之梯度下降法 - 顾翅的笔记</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -200,7 +206,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="常见服务器限流算法及实现"></span>
+            <span id="subtitle" data-typed-text="机器学习之梯度下降法"></span>
           
         </div>
 
@@ -211,8 +217,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-05-06 17:44" pubdate>
-          2023年5月6日 下午
+        <time datetime="2023-10-31 19:27" pubdate>
+          2023年10月31日 晚上
         </time>
       </span>
     
@@ -223,7 +229,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.7k 字
+          3.8k 字
         
       </span>
     
@@ -235,7 +241,7 @@
         
         
           <!-- compatible with older versions-->
-          32 分钟
+          33 分钟
         
       </span>
     
@@ -281,37 +287,42 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">常见服务器限流算法及实现</h1>
+            <h1 style="display: none">机器学习之梯度下降法</h1>
             
             <div class="markdown-body">
               
-              <h1 id="服务器限流服务"><a href="#服务器限流服务" class="headerlink" title="服务器限流服务"></a>服务器限流服务</h1><p>限流服务是服务端常用的保证进程稳定性的手段，常见的限流算法有：<strong>计数器、固定窗口，滑动窗口、漏桶、令牌桶</strong></p>
-<h2 id="1-计数器算法"><a href="#1-计数器算法" class="headerlink" title="1.计数器算法"></a><strong>1.计数器算法</strong></h2><p>计数器算法是限流算法里最简单也是最容易实现的一种算法。比如我们规定，对于A接口来说，我们1分钟的访问次数不能超过100个。</p>
-<p>那么我们可以每一分钟重置下计数器counter，当请求到来时，如果距离上次重置计数器在一分钟以内就将counter加1，如果1分钟内counter的值大于100则说明请求过多，需要限流，具体算法的示意图如下：</p>
-<p><img src="https://pic2.zhimg.com/80/v2-bd04d1f09aca34d8805b7a256674ba21_720w.webp" srcset="/MyBlog/img/loading.gif" lazyload></p>
-<p>这个算法虽然简单，但是<strong>存在临界问题</strong>，我们看下图：</p>
-<p><img src="https://pic1.zhimg.com/80/v2-21d2f4d147c28dcba3e7a448a7fd6924_720w.webp" srcset="/MyBlog/img/loading.gif" lazyload></p>
-<p>假设一个用户，他在0:59时，瞬间发送了100个请求，并且1:00又瞬间发送了100个请求，那么其实这个用户在 1秒里面，瞬间发送了200个请求。也就是该玩家在1秒内请求量达到了限流上限的2倍，会对服务器造成瞬时压力。</p>
-<h2 id="2-滑动窗口"><a href="#2-滑动窗口" class="headerlink" title="2. 滑动窗口"></a><strong>2. 滑动窗口</strong></h2><p>滑动窗口，又称rolling window。可解决计数算法的临界问题。类似于TCP中的滑动窗口算法，我们在计算counter的时候并不是计算0:00~1:00这样固定的时间窗口的请求总数，而是计算距离当前最近1分钟的请求总量，这样就可避免请求量短时间内突破限流上限。</p>
-<p><img src="https://pic2.zhimg.com/80/v2-a2a403b505a5d387a95eeed76a5515c1_720w.webp" srcset="/MyBlog/img/loading.gif" lazyload></p>
-<p>如上图中，我们将1分钟按照每10s划分为6个格子，每个格子有自己单独的计数器组成一个count_lst。当新请求到来时，首先根据上次请求时间与当前时间差对窗口进行移动，新请求其所属时间格子一定是最后一个10s内，因此可以直接count_lst[-1]+&#x3D;1。在滑动窗口中我们统计最近1分钟的计数器之和来进行限流。</p>
-<h2 id="3-令牌桶算法"><a href="#3-令牌桶算法" class="headerlink" title="3.令牌桶算法"></a><strong>3.令牌桶算法</strong></h2><p>滑动窗口虽然解决了瞬时请求过大问题，但是并不要求请求在时间窗口中均匀分布，令牌桶算法则可以限制请求速率。我们将请求发行的凭证称之为令牌，请求只有获取到合法令牌才能避免被限流，而令牌桶算法会限制最大令牌数量即桶的容量，并且当令牌桶没有满的时候会定时产生一定数量的令牌加入到桶中。每个请求会消耗一些令牌，如果令牌容量小于单次请求消耗的令牌数量，则请求被限制。</p>
-<p><img src="https://pic3.zhimg.com/80/v2-fcd054bc771bf1856d6428837815582e_720w.webp" srcset="/MyBlog/img/loading.gif" lazyload></p>
-<p>缺点：令牌桶，假如系统上线时没有预热，那么可能会出现由于此时桶中还没有令牌，而导致请求被误杀的情况</p>
-<h2 id="4-漏桶算法"><a href="#4-漏桶算法" class="headerlink" title="4.漏桶算法"></a><strong>4.漏桶算法</strong></h2><p>令牌桶算法缓存请求通行的凭证，而漏桶算法则是缓存请求；漏桶算法的基本思想是，流量持续进入漏桶中，底部则<strong>定速处理</strong>请求，如果流量进入的速率高于底部请求被处理的速率，且当桶中的流量超过桶的大小时，流量就会被溢出。具体如下图所示：</p>
-<p><img src="https://pic4.zhimg.com/80/v2-c1186190a3ab7bcb6c24ac6a5cd13fc7_720w.webp" srcset="/MyBlog/img/loading.gif" lazyload></p>
-<p>漏桶中由于请求是暂存在桶中的，所以请求什么时候能被处理，则是有延时的。</p>
-<h2 id="5-限流服务实现"><a href="#5-限流服务实现" class="headerlink" title="5.限流服务实现"></a>5.限流服务实现</h2><p>由于使用场景和服务器架构的不同，应该选用不同的限流算法。相比单一机器或者进程的限流服务，分布式服务器架构中的限流服务相对复杂一些。本质上单机限流和分布式限流的区别其实在于 “计数器” 存放的位置。</p>
-<p>针对单机限流，我们可以直接将计数器存放到内存中，以下是python实现的滑动窗口单机限流源码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SlidingWindow</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-string">&quot;&quot;&quot; </span><br><span class="hljs-string">        滑动窗口限流本进程使用</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, window_size, window_ts, threshold</span>):<br>        self.window_size = window_size          <span class="hljs-comment"># 窗口大小</span><br>        self.window_unit_ts = window_ts         <span class="hljs-comment"># 窗口时间单元 单位：秒</span><br>        self.threshold = threshold              <span class="hljs-comment"># 最大请求次数</span><br>        self.count_lst = []                     <span class="hljs-comment"># 记录单元次数</span><br>        self.last_refresh_time = <span class="hljs-number">0</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">init_count_lst</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-string">&quot;&quot;&quot; </span><br><span class="hljs-string">            初始化滑动窗口</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        self.count_lst = [<span class="hljs-number">0</span> <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> xrange(self.window_size)]<br>        now = time.time()<br>        self.last_refresh_time = now - now % self.window_unit_ts<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">refresh_count_lst</span>(<span class="hljs-params">self, now</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">            更新滑动窗口</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        expire_unit = <span class="hljs-built_in">int</span>((now - self.last_refresh_time) / self.window_unit_ts)<br>        expire_unit = <span class="hljs-built_in">min</span>(expire_unit, self.window_size)<br>        self.count_lst = self.count_lst[expire_unit:]<br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> xrange(self.window_size - <span class="hljs-built_in">len</span>(self.count_lst)):<br>            self.count_lst.append(<span class="hljs-number">0</span>)<br>        self.last_refresh_time = now - now % self.window_unit_ts<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">try_request</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">            尝试请求</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        now = time.time()<br>        self.refresh_count_lst(now)<br>        <span class="hljs-keyword">if</span> <span class="hljs-built_in">sum</span>(self.count_lst) &gt;= self.threshold:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span><br>        self.count_lst[-<span class="hljs-number">1</span>] += <span class="hljs-number">1</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span><br></code></pre></td></tr></table></figure>
+              <h1 id="机器学习实战"><a href="#机器学习实战" class="headerlink" title="机器学习实战"></a>机器学习实战</h1><p>在机器学习里，每一行数据被看做一个样本，每一列数据被看做一个特征，可根据输入数据的维度建立不同自变量个数的模型进行拟合。</p>
+<p><img src="/MyBlog/images/201903162215018.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>在对数据模型的训练中，预测值与真实值会存在一定的偏差。当误差值最小时，可以看做模型最优解。损失函数就是用来评价模型的预测值和真实值不一样的程度，当损失值越小，证明预计值越接近真实值，模型的训练程度就越好。为了让预测值 y^ (i)  尽量接近于真实值 y(i) ，学者提出了多个方法进行计算损失值，最常见的损失函数有均方误差（MSE）、交叉熵误差（CEE）等。</p>
+<p><strong>均方误差MSE</strong>中，因为每个预测值与真实值大小不同，为了解决差值的正负值之分，所以误差大小就用差值平方来表示，差值越小，平方值小，误差越小。 均方误差计算公式就是求预测值与真实值之间的方差平均值，如果均方误差越小，那就证明预测值越接近于真实值。</p>
+<p><img src="/MyBlog/images/gradinet3.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p><strong>交叉熵误差（CEE）</strong>的公式如下，其中 ![t&#x3D;t1,t2,,tn]为实际的分类结果，![y&#x3D;y1,y2,,yn]为预测的结果</p>
+<p><img src="/MyBlog/images/gradinet4.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>把它用于分类模型时有一个很好的特性，可以真实的反应出真实分类结果和预测结果的误差，假设 ![ti&#x3D;1], 即真实的分类结果是 ![ti], 则 交叉熵误差可以简化为 ![E&#x3D;logyi]，那函数图像如下。可以看到，![yi]越接近，即预测结果和真实分类结果越接近，误差越接近即误差越小。</p>
+<p><img src="/MyBlog/images/gradinet5.jpg" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>关于求损失函数最小值有多种算法，下面介绍两种最常用也是最容易理解的算法：最小二乘法（OLS）与梯度下降法（GD）它们的目标均是求出 n 个 y计算值与 y(i)真实值值误差值平方和最小时各常量参数的值。</p>
+<h2 id="最小二乘法"><a href="#最小二乘法" class="headerlink" title="最小二乘法"></a>最小二乘法</h2><p>小二乘法是基于 MSE 均方误差而来，以直线方程 y&#x3D;a*x+b 为例，均方误差越小，证明预测值越接近于真实值，这时候只要求出最小均方误差时 a，b的值，也就可以得出此直线的方程。因为 n 是个常数，所以求最小均方误差的公式可以转化为求预测值 y^ (i) 与真实值之 y(i) 间的最小方差，这就是最小二乘法的由来</p>
+<p><img src="/MyBlog/images/gradinet6.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>预测值 y^ (i)&#x3D;a*xi +b带入上式可转换如下图，由于是计算平方和，所以表达式一定存在最小值，为了确认最小值时a,b的值可通过求偏导为0计算。</p>
+<p><img src="/MyBlog/images/gradinet7.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>接下来变成求偏导的数学计算，需要参考矩阵求导法则，这里不作深入研究。</p>
+<h2 id="梯度下降法"><a href="#梯度下降法" class="headerlink" title="梯度下降法"></a>梯度下降法</h2><p>最小二乘法只需一次矩阵运算即可，梯度下降法则是一步一步迭代求结果。上面提到损失函数就是用来评价模型的预测值和真实值不一样的程度，损失值越小证明参数的预测值越接近于真实值。梯度下降法就是用于求损失值最小时的参数值，相对于最小二乘法复杂的数学公式，它可以通过偏导数斜率的变化更形象地描述解决的过程。</p>
+<p>先介绍梯度下降法用到的基本概念：<br><strong>切线斜率</strong>：从数学的角度可知，一维函数在点 x 的导数叫做函数在点 x 的切线斜率，二维函数在点（x0,x1) 的偏导数称为点（x0,x1) 的切线斜率，如此类推。<br><strong>鞍点</strong>：函数的极小值（最小值）被称为鞍点，从数学原理可知当到达鞍点时，切线斜率接近于 0。<br><strong>梯度</strong>：以常用的二元方程 f(x0,x1)&#x3D;x02+x12 为例子，把全部变量的偏导数（切线斜率）汇总成的向量称为梯度</p>
+<p><img src="/MyBlog/images/gradinet8.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>下面以一个二次方程 f(x)&#x3D;x2+1 为例，介绍一下如何通过梯度下降法求极值<br>首先，切线的斜率可以通过导数原理求得，例如 f(x) 分别经过点 A(- 4,17) ，B(- 5,26)，此时会发现，两点之间的距离越小，它们所组成的直线就越接近于该点的切线。两点距离无限接近于0时，此时可认为这条直线就是该点的切线，这也是微积分的基本原理。</p>
+<p><img src="/MyBlog/images/gradinet10.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p>梯度下降法最终的目标是求得切线斜率接近无限于0时的数据点（鞍点） 所以函数可以使用最简单的方法，使取值沿着当前梯度方向不断前进，然后重复计算梯度。通过此递归方式，切线斜率就是无限接近于0。<br>用数学公式表达如下图，η 表示学习率，学习率可以根据实际需要而改变，将学习率乘以该点的切线斜率代表学习量。</p>
+<p><img src="/MyBlog/images/gradinet11.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<h2 id="代码实例"><a href="#代码实例" class="headerlink" title="代码实例"></a>代码实例</h2><p>有了上面梯度下降法理论知识，我们采用一元二次方程y&#x3D;a<em>x^2+b</em>x+c为例对平面上的点进行拟合。</p>
+<p>这里需要用到几个常用的python库：sklearn、numpy、pyplot、sympy。</p>
+<p>其中sklearn中包含最常用的机器学习库。包含了大量的数据集可为运算提供测试案例。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 若sklearn未安装可 pip install -U scikit-learn</span><br><span class="hljs-keyword">import</span> sklearn.datasets <span class="hljs-keyword">as</span> dataset<br><span class="hljs-comment"># n_samples样本大小，n_features样本维度，noise噪音</span><br>X,y=dataset.make_regression(n_samples=<span class="hljs-number">20</span>, n_features=<span class="hljs-number">1</span>, noise=<span class="hljs-number">10</span>)<br></code></pre></td></tr></table></figure>
 
-<p>上述代码中定义了窗口大小，每个窗口单元的时间长度，请求阈值，基于这三个值就可以实现单机限流服务了。另外窗口计数器需要随时间更新，可定时对count_lt进行更新，也可在每次请求到来时先检查窗口状态，这里采用请求时更新。</p>
-<p>分布式限流可基redis做中心节点，例如滑动窗口的每个请求的时间记录可以利用 redis 的 <code>zset</code> 存储，利用<code>ZREMRANGEBYSCORE</code> 删除时间窗口之外的数据，再用 <code>ZCARD</code>计数。<strong>需要注意的是操作redis的原子性</strong>，采用lua脚本操作redis可解决原子操作的问题，如下是lua+redis实现的令牌桶算法。</p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-keyword">local</span> key = KEYS[<span class="hljs-number">1</span>]<br><span class="hljs-keyword">local</span> max_permits = <span class="hljs-built_in">tonumber</span>(ARGV[<span class="hljs-number">1</span>])<br><span class="hljs-keyword">local</span> permits_per_second = <span class="hljs-built_in">tonumber</span>(ARGV[<span class="hljs-number">2</span>])<br><span class="hljs-keyword">local</span> required_permits = <span class="hljs-built_in">tonumber</span>(ARGV[<span class="hljs-number">3</span>])<br><span class="hljs-keyword">local</span> last_free_ticket_micros = <span class="hljs-built_in">tonumber</span>(redis.call(<span class="hljs-string">&#x27;hget&#x27;</span>, key, <span class="hljs-string">&#x27;last_free_ticket_micros&#x27;</span>) <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>)<br><span class="hljs-keyword">local</span> <span class="hljs-built_in">time</span> = redis.call(<span class="hljs-string">&#x27;time&#x27;</span>)<br><span class="hljs-keyword">local</span> now_micros = <span class="hljs-built_in">tonumber</span>(<span class="hljs-built_in">time</span>[<span class="hljs-number">1</span>]) * <span class="hljs-number">1000000</span> + <span class="hljs-built_in">tonumber</span>(<span class="hljs-built_in">time</span>[<span class="hljs-number">2</span>])<br><span class="hljs-keyword">local</span> stored_permits = <span class="hljs-built_in">tonumber</span>(redis.call(<span class="hljs-string">&#x27;hget&#x27;</span>, key, <span class="hljs-string">&#x27;stored_permits&#x27;</span>) <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>)<br><span class="hljs-keyword">local</span> stable_interval_micros = <span class="hljs-number">1000000</span> / permits_per_second<br><span class="hljs-keyword">if</span> (now_micros &gt; last_free_ticket_micros) <span class="hljs-keyword">then</span><br>    <span class="hljs-keyword">local</span> new_permits = (now_micros - last_free_ticket_micros) / stable_interval_micros<br>    stored_permits = <span class="hljs-built_in">math</span>.<span class="hljs-built_in">min</span>(max_permits, stored_permits + new_permits)<br>    last_free_ticket_micros = now_micros<br><span class="hljs-keyword">end</span><br><span class="hljs-keyword">local</span> res = <span class="hljs-number">0</span><br><span class="hljs-keyword">if</span> (stored_permits &gt;= required_permits) <span class="hljs-keyword">then</span><br>    stored_permits = stored_permits - required_permits<br>    res = <span class="hljs-number">1</span><br><span class="hljs-keyword">end</span><br>redis.call(<span class="hljs-string">&#x27;hset&#x27;</span>, key, <span class="hljs-string">&#x27;stored_permits&#x27;</span>, stored_permits)<br>redis.call(<span class="hljs-string">&#x27;hset&#x27;</span>, key, <span class="hljs-string">&#x27;last_free_ticket_micros&#x27;</span>, last_free_ticket_micros)<br><span class="hljs-keyword">return</span> res<br></code></pre></td></tr></table></figure>
+<p>numpy.mean可计算数组数据的算术平均值, sympy.diff可用于求偏导,完整代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># -*- coding: utf-8 -*-</span><br><span class="hljs-comment"># 通过梯度下降法求输入样本的一元二次拟合函数</span><br><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np <br><span class="hljs-keyword">import</span> sympy <span class="hljs-keyword">as</span> sp<br><span class="hljs-keyword">from</span> sympy <span class="hljs-keyword">import</span> symbols<br><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt<br><span class="hljs-keyword">import</span> sklearn.datasets <span class="hljs-keyword">as</span> dataset<br><br><span class="hljs-comment"># 用一元二次方程对数据分布进行拟合y = a*x^2+b*x+c</span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">gradinet_drop</span>():<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self,train_x,train_y</span>):<br>        <span class="hljs-comment">#定义测试数据,其中train_x和train_y均为1元数组</span><br>        self.x=train_x<br>        self.y=train_y<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">mes</span>(<span class="hljs-params">self,a,b,c</span>):<br>        <span class="hljs-comment">#均方误差损失函数1/2（y-f(x)）^2</span><br>        <span class="hljs-keyword">return</span> np.mean(<span class="hljs-number">1</span>/<span class="hljs-number">2</span>*(self.y-a*self.x*self.x-b*self.x-c)**<span class="hljs-number">2</span>)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">partial_derivative</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-comment">#损失函数中，x,y是已知的，我们只需要求 mes(a,b,c)对 a,b,c的偏导数</span><br>        <span class="hljs-comment">#从而确认a,b,c的鞍点时mes(a,b,c)最小。</span><br>        a = symbols(<span class="hljs-string">&quot;a&quot;</span>)<br>        b = symbols(<span class="hljs-string">&quot;b&quot;</span>)<br>        c = symbols(<span class="hljs-string">&quot;c&quot;</span>)<br>        partial_derivative_a=sp.diff(self.mes(a,b,c), a) <span class="hljs-comment"># 基于损失函数求偏导</span><br>        partial_derivative_b=sp.diff(self.mes(a,b,c), b)<br>        partial_derivative_c=sp.diff(self.mes(a,b,c), c)<br>        <span class="hljs-keyword">return</span> [partial_derivative_a, partial_derivative_b, partial_derivative_c]<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">gradinet</span>(<span class="hljs-params">self,rate=<span class="hljs-number">0.01</span>,n=<span class="hljs-number">1000</span></span>):<br>        <span class="hljs-comment">#学习率默认为0.01，默认重复1000次</span><br>        <span class="hljs-comment">#把 y=a*x^2+bx+c 参数 a,b,c 的初始值设为 1，1, 1</span><br>        a1=<span class="hljs-number">1</span><br>        b1=<span class="hljs-number">1</span><br>        c1=<span class="hljs-number">1</span><br>        a = symbols(<span class="hljs-string">&quot;a&quot;</span>)<br>        b = symbols(<span class="hljs-string">&quot;b&quot;</span>)<br>        c = symbols(<span class="hljs-string">&quot;c&quot;</span>)<br>        <span class="hljs-comment">#默认训练1000次，找到最小均方误差时的 a,b 值</span><br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n):<br>            deri=self.partial_derivative()<br>            a1-=deri[<span class="hljs-number">0</span>].subs(&#123;a:a1,b:b1,c:c1&#125;)*rate<br>            b1-=deri[<span class="hljs-number">1</span>].subs(&#123;a:a1,b:b1,c:c1&#125;)*rate<br>            c1-=deri[<span class="hljs-number">2</span>].subs(&#123;a:a1,b:b1,c:c1&#125;)*rate<br>        <span class="hljs-comment">#输出直线参数 a,b 值</span><br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;y=a*x^2+b*x+c\n  a=&#123;0&#125;,b=&#123;1&#125;,c=&#123;2&#125;&#x27;</span>.<span class="hljs-built_in">format</span>(a1,b1,c1))<br>        <span class="hljs-keyword">return</span> [a1,b1,c1]<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">polt_line</span>(<span class="hljs-params">self,param</span>):<br>        <span class="hljs-comment">#根据a,b参数值划出直线</span><br>        x = np.linspace(-<span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">100</span>)<br>        y=param[<span class="hljs-number">0</span>]*x*x+param[<span class="hljs-number">1</span>]*x+param[<span class="hljs-number">2</span>]<br>        plt.plot(x,y,<span class="hljs-number">20</span>)<br>        plt.legend([<span class="hljs-string">&#x27;train data&#x27;</span>,<span class="hljs-string">&#x27;line&#x27;</span>])<br><br><span class="hljs-comment">#生成测试数据 n_features特征值自变量个数</span><br>X,y=dataset.make_regression(n_samples=<span class="hljs-number">20</span>, n_features=<span class="hljs-number">1</span>,noise=<span class="hljs-number">15</span>)<br><span class="hljs-comment"># np.squeeze将二维数组转换为1维</span><br>gradient_drop=gradinet_drop(np.squeeze(X),y)<br><span class="hljs-comment">#画出数据点</span><br>plt.plot(X,y,<span class="hljs-string">&#x27;.&#x27;</span>)<br><span class="hljs-comment">#训练数据找出最小均方误差时的参数 a,b 值</span><br>param=gradient_drop.gradinet()<br><span class="hljs-comment">#画出训练后的直线</span><br>gradient_drop.polt_line(param)<br>plt.show()<br></code></pre></td></tr></table></figure>
 
-<p>python层可通过封装redis的EVAL或者EVALSHA命令来运行lua脚本</p>
-<h2 id="限流的难点"><a href="#限流的难点" class="headerlink" title="限流的难点"></a><strong>限流的难点</strong></h2><p>可以看到每个限流都有个阈值，这个阈值如何定是个难点。定大了服务器可能顶不住，定小了就“误杀”了，没有资源利用最大化，对用户体验不好。</p>
-<p>最好的办法是能动态地调整限流的阈值，于是可以基于TCP拥塞控制的思想，根据请求响应在一个时间段的响应时间来确定此时服务器的健康状况，从而动态调整限流阈值。</p>
+<p>运行结果：<br><img src="/MyBlog/images/gradinet0.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
+<p><img src="/MyBlog/images/gradinet1.png" srcset="/MyBlog/img/loading.gif" lazyload></p>
 
               
             </div>
@@ -329,7 +340,7 @@
     
       <span class="category-chain">
         
-  <a href="/MyBlog/categories/python/" class="category-chain-item">python</a>
+  <a href="/MyBlog/categories/AI/" class="category-chain-item">AI</a>
   
   
 
@@ -344,7 +355,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/MyBlog/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">#性能优化</a>
+        <a href="/MyBlog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">#机器学习</a>
       
     </div>
   
@@ -356,8 +367,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>常见服务器限流算法及实现</div>
-      <div>https://minifive.github.io/MyBlog/2023/05/06/常见服务器限流算法及实现/</div>
+      <div>机器学习之梯度下降法</div>
+      <div>https://minifive.github.io/MyBlog/2023/10/31/机器学习之梯度下降法/</div>
     </div>
     <div class="license-meta">
       
@@ -369,7 +380,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年5月6日</div>
+          <div>2023年10月31日</div>
         </div>
       
       
@@ -399,18 +410,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/MyBlog/2023/10/31/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95/" title="机器学习之梯度下降法">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">机器学习之梯度下降法</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/MyBlog/2022/12/15/python%E5%92%8CC-%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B/" title="python和C++混合编程">
-                        <span class="hidden-mobile">python和C++混合编程</span>
+                      <a href="/MyBlog/2023/05/06/%E5%B8%B8%E8%A7%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%99%90%E6%B5%81%E7%AE%97%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0/" title="常见服务器限流算法及实现">
+                        <span class="hidden-mobile">常见服务器限流算法及实现</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
